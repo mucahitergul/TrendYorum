@@ -466,14 +466,20 @@ fi
 
 # 13. Bağımlılıkları yükle ve build et
 echo -e "${BLUE}[13/15] Bağımlılıklar yükleniyor ve proje build ediliyor...${NC}"
+
+# Proje dizinine geç ve npm komutlarını çalıştır
+cd $APP_DIR
+echo -e "${BLUE}Çalışma dizini: $(pwd)${NC}"
+
 sudo -u $APP_USER npm install
 
 # Build işlemi
 echo -e "${BLUE}Proje build ediliyor...${NC}"
 sudo -u $APP_USER npm run build
 
-# PM2 ecosystem dosyası
-sudo -u $APP_USER cat > ecosystem.config.js << EOF
+# PM2 ecosystem dosyası (proje dizininde)
+echo -e "${BLUE}PM2 ecosystem dosyası oluşturuluyor...${NC}"
+sudo -u $APP_USER cat > $APP_DIR/ecosystem.config.js << EOF
 module.exports = {
   apps: [{
     name: 'trendyol-reviews',
@@ -496,14 +502,16 @@ module.exports = {
 };
 EOF
 
-# Log dizini oluştur
-sudo -u $APP_USER mkdir -p logs
+# Log dizini oluştur (proje dizininde)
+sudo -u $APP_USER mkdir -p $APP_DIR/logs
 
-# PM2 ile başlat
-sudo -u $APP_USER pm2 start ecosystem.config.js
+# PM2 ile başlat (proje dizininden)
+echo -e "${BLUE}PM2 ile uygulama başlatılıyor...${NC}"
+sudo -u $APP_USER pm2 start $APP_DIR/ecosystem.config.js
 sudo -u $APP_USER pm2 save
 
 # PM2 startup
+echo -e "${BLUE}PM2 startup ayarlanıyor...${NC}"
 sudo -u $APP_USER pm2 startup | grep "sudo env" | bash
 
 echo -e "${GREEN}✅ Uygulama başlatıldı${NC}"
