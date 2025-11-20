@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import pool from '../../../lib/db';
 
 // CORS headers
 const corsHeaders = {
@@ -20,83 +21,77 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Bu örnekte sabit veri döndürüyoruz
-    // Gerçek uygulamada burada veritabanından SKU'ya göre veri çekeceksiniz
+    // Veritabanından SKU'ya göre ürün ve yorumları çek
+    const client = await pool.connect();
     
-    // SKU'ya göre contentId ve merchantId mapping'i
-    const skuMapping: { [key: string]: { contentId: string; merchantId: string } } = {
-      // Örnek SKU mapping'leri - kendi ürünlerinize göre güncelleyin
-      'PROD-001': { contentId: '41833143', merchantId: '371621' },
-      'PROD-002': { contentId: '835796151', merchantId: '371621' },
-      'sample-sku': { contentId: '41833143', merchantId: '371621' },
-      // Daha fazla SKU mapping ekleyebilirsiniz
-    };
+    try {
+      // Önce ürün bilgilerini çek
+      const productQuery = `
+        SELECT sku, domain, average_score, total_comment_count 
+        FROM products 
+        WHERE sku = $1 
+        ORDER BY updated_at DESC 
+        LIMIT 1
+      `;
+      
+      const productResult = await client.query(productQuery, [sku]);
+      
+      if (productResult.rowCount === 0) {
+        // SKU bulunamadı, boş veri döndür
+        return NextResponse.json({
+          product: {
+            average_score: 0,
+            total_comment_count: 0,
+            domain: 'Madetoll by TazeKrem'
+          },
+          comments: []
+        }, { headers: corsHeaders });
+      }
 
-    const mapping = skuMapping[sku];
-    
-    if (!mapping) {
-      // SKU bulunamadı, boş veri döndür
-      return NextResponse.json({
+      const product = productResult.rows[0];
+      
+      // Yorumları çek
+      const reviewsQuery = `
+        SELECT r.id, r.user_full_name, r.rating, r.comment, r.date_text, r.elit_customer,
+               COALESCE(json_agg(rp.url) FILTER (WHERE rp.url IS NOT NULL), '[]') as photos
+        FROM reviews r
+        LEFT JOIN review_photos rp ON rp.review_id = r.id
+        WHERE r.sku = $1 AND r.domain = $2
+        GROUP BY r.id, r.user_full_name, r.rating, r.comment, r.date_text, r.elit_customer
+        ORDER BY r.id DESC
+        LIMIT 200
+      `;
+      
+      const reviewsResult = await client.query(reviewsQuery, [sku, product.domain]);
+      
+      // Veriyi format et
+      const formattedData = {
         product: {
-          average_score: 0,
-          total_comment_count: 0,
+          average_score: product.average_score || 0,
+          total_comment_count: product.total_comment_count || 0,
           domain: 'Madetoll by TazeKrem'
         },
-        comments: []
-      }, { headers: corsHeaders });
+        comments: reviewsResult.rows.map((review: any) => ({
+          review_id: review.id,
+          user: review.user_full_name || '****',
+          rating: review.rating || 0,
+          comment: review.comment || '',
+          date: review.date_text || '',
+          photos: review.photos || [],
+          seller: 'Madetoll by TazeKrem',
+          elit_customer: review.elit_customer || false,
+          user_info: null // Eğer user_info tablosu varsa buraya eklenebilir
+        }))
+      };
+
+      return NextResponse.json(formattedData, { headers: corsHeaders });
+
+    } finally {
+      client.release();
     }
-
-    // Trendyol API'sinden veri çek
-    const apiUrl = `https://public-mdc.trendyol.com/discovery-web-socialgw-service/v1/review/${mapping.contentId}?merchantId=${mapping.merchantId}&storefrontId=1&culture=tr-TR&linear=true`;
-    
-    const response = await fetch(apiUrl, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Accept': 'application/json',
-        'Accept-Language': 'tr-TR,tr;q=0.9,en;q=0.8',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Trendyol API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    
-    // Yorumları işle ve mağaza adını güncelle
-    if (data.result && data.result.productReviews && data.result.productReviews.content) {
-      data.result.productReviews.content = data.result.productReviews.content.map((comment: any) => ({
-        ...comment,
-        seller: 'Madetoll by TazeKrem' // Mağaza adını manuel olarak ayarla
-      }));
-    }
-
-    // Veriyi uygun formata dönüştür
-    const formattedData = {
-      product: {
-        average_score: data.result?.averageRating || 0,
-        total_comment_count: data.result?.totalElements || 0,
-        domain: 'Madetoll by TazeKrem'
-      },
-      comments: data.result?.productReviews?.content?.map((review: any) => ({
-        review_id: review.id,
-        user: review.userPublicName || review.userName,
-        rating: review.rate,
-        comment: review.comment,
-        date: review.commentDateISOtype || review.commentDate,
-        photos: review.imageUrls || [],
-        seller: 'Madetoll by TazeKrem',
-        user_info: review.userInfo ? {
-          height: review.userInfo.height,
-          weight: review.userInfo.weight
-        } : null
-      })) || []
-    };
-
-    return NextResponse.json(formattedData, { headers: corsHeaders });
 
   } catch (error) {
-    console.error('Error fetching reviews:', error);
+    console.error('Error fetching reviews from database:', error);
     
     // Hata durumunda boş veri döndür
     return NextResponse.json({
