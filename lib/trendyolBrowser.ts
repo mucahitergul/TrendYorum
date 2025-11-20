@@ -29,7 +29,7 @@ export async function fetchReviewsWithBrowser({ contentId, merchantId, listingId
       page: '0',
     });
     if (listingId) q.set('listingId', listingId);
-    const first = await page.evaluate(async (url) => {
+    const first = await page.evaluate(async (url: string) => {
       const res = await fetch(url, { headers: { accept: 'application/json, text/plain, */*' } });
       if (!res.ok) throw new Error('first fetch failed: ' + res.status);
       return res.json();
@@ -40,7 +40,7 @@ export async function fetchReviewsWithBrowser({ contentId, merchantId, listingId
     for (let p = 1; p < totalPages; p++) {
       q.set('page', String(p));
       try {
-        const j = await page.evaluate(async (url) => {
+        const j = await page.evaluate(async (url: string) => {
           const res = await fetch(url, { headers: { accept: 'application/json, text/plain, */*' } });
           if (!res.ok) return null;
           return res.json();

@@ -475,7 +475,12 @@ sudo -u $APP_USER npm install
 
 # Build işlemi
 echo -e "${BLUE}Proje build ediliyor...${NC}"
-sudo -u $APP_USER npm run build
+if ! sudo -u $APP_USER npm run build; then
+    echo -e "${RED}❌ Build başarısız! TypeScript hataları olabilir.${NC}"
+    echo -e "${YELLOW}Build loglarını kontrol edin ve hataları düzeltin.${NC}"
+    exit 1
+fi
+echo -e "${GREEN}✅ Build başarılı${NC}"
 
 # PM2 ecosystem dosyası (proje dizininde)
 echo -e "${BLUE}PM2 ecosystem dosyası oluşturuluyor...${NC}"

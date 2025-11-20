@@ -28,7 +28,7 @@ export async function GET(req: Request) {
       );
       return NextResponse.json({
         product: { sku, domain, average_score, total_comment_count },
-        comments: r.rows.map(x => ({
+        comments: r.rows.map((x: any) => ({
           review_id: x.id,
           user: x.user_full_name,
           rating: x.rating,
