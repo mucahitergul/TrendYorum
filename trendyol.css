@@ -1,0 +1,66 @@
+.posttik-container {
+    margin: 0 auto;
+    max-width: 1368px;
+    margin-top: 0px;
+    border: solid 1px #e6e6e6;
+    background-color: #fff;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+@media (max-width: 1100px) {
+    #divMobileImageList .owl-dots {
+        display: none;
+    }
+
+    .TopDet .RightDetail:before {
+        content: "";
+        width: 60px;
+        height: 28px;
+        background-color: white;
+        display: inline-block;
+        position: absolute;
+        top: 0;
+        transform: translateY(-99%) translateX(-50%);
+        left: 50%;
+        background-image: url(https://static.ticimax.cloud/66510//uploads/images/up.svg);
+        background-repeat: no-repeat;
+        background-position: center;
+        border-radius: 6px 6px 0 0;
+        box-shadow: rgba(0, 0, 0, 0.24) 0px -7px 8px;
+    }
+    .ProductBody #divIcerik {
+        padding: 0px !important;
+    }
+    .leftImage .lightItem {
+        width: 100vw;
+        display: flex;
+    }
+    .TopDet .leftImage {
+        border: none;
+        border-radius: 0;
+        padding: 0;
+        position: fixed;
+        top: 0;
+        overscroll-behavior: contain;
+        opacity: 0;
+    }
+    .TopDet :is(.RightDetail,.product-mini-right) {
+        background-color: white;
+        padding: 10px;
+        z-index: 9;
+        position: relative;
+    }
+    .TopDet .leftImage img {
+        border-radius: 0;
+    }
+    div#divThumbList {
+        display: none !important;
+    }
+}
+@media (max-width: 769px) {
+    .posttik-container {
+        padding: 10px;
+        overflow: hidden;
+    }
+}

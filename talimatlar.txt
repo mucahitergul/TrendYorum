@@ -1,0 +1,44 @@
+Trendyol yorumlar aşağıdaki bağlantıya istek atılarak alınabiliyor. 
+contentId=857162242 bilgisi ürünün id bilgisidir. &merchantId=955182 değeri ise satıcının mağaza idsi olarak işleme alınmalıdır. page değeri ise kaç sayfa yorum olduğudur. 
+ilk istek page 0 olarak atılır. page 0 dan gelen sonuçun en sonunda örnek olarak totalElements: 418  totalPages: 14 şeklinde bilgi bulunur. bu toplam yorum ve toplam sayfa değeridir. totalpages değeri dikkate alınarak her ürün gezilecek yorum sayfa sayısı belirlenecektir.
+
+https://apigw.trendyol.com/discovery-storefront-trproductgw-service/api/review-read/product-reviews/images?storefrontId=1&culture=tr-TR&channelId=1&listingId=7d102773801479ea15d0000634250f4e&contentId=857162242&merchantId=955182&page=1
+
+istek atarken tarayıcı takliti yapılmalıdır. 
+
+:authority
+apigw.trendyol.com
+:method
+GET
+:path
+/discovery-storefront-trproductgw-service/api/review-read/product-reviews/images?storefrontId=1&culture=tr-TR&channelId=1&listingId=7d102773801479ea15d0000634250f4e&contentId=857162242&merchantId=955182&page=0
+:scheme
+https
+accept
+application/json, text/plain, */*
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+tr-TR,tr;q=0.9,en;q=0.8
+cache-control
+no-cache
+origin
+https://www.trendyol.com
+pragma
+no-cache
+priority
+u=1, i
+sec-ch-ua
+"Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Windows"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+same-site
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36
