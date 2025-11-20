@@ -560,7 +560,7 @@ server {
     gzip on;
     gzip_vary on;
     gzip_min_length 1024;
-    gzip_proxied expired no-cache no-store private must-revalidate auth;
+    gzip_proxied expired no-cache no-store private auth;
     gzip_types text/plain text/css text/xml text/javascript application/javascript application/xml+rss application/json;
 
     # Main application
@@ -595,11 +595,6 @@ server {
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto \$scheme;
-        
-        # API specific headers
-        add_header Access-Control-Allow-Origin "*" always;
-        add_header Access-Control-Allow-Methods "GET, POST, OPTIONS" always;
-        add_header Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Authorization" always;
     }
 
     # Health check
@@ -626,10 +621,14 @@ if [ -f /etc/nginx/sites-enabled/default ]; then
 fi
 
 # Nginx konfigürasyonunu test et
+echo -e "${BLUE}Nginx konfigürasyonu test ediliyor...${NC}"
 if nginx -t; then
     echo -e "${GREEN}✅ Nginx konfigürasyonu geçerli${NC}"
 else
     echo -e "${RED}❌ Nginx konfigürasyonu hatalı!${NC}"
+    echo -e "${YELLOW}Hatalı konfigürasyon dosyası: /etc/nginx/sites-available/$FULL_DOMAIN${NC}"
+    echo -e "${BLUE}Konfigürasyon içeriği:${NC}"
+    cat /etc/nginx/sites-available/$FULL_DOMAIN
     exit 1
 fi
 
