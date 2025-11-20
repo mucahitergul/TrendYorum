@@ -1,11 +1,12 @@
 (function () {
   'use strict';
 
-  // Configuration
+  const scriptEl = document.currentScript || document.querySelector('script[src*="woocommerce-snippet.js"]');
+  const origin = scriptEl ? new URL(scriptEl.src).origin : window.location.origin;
   const CONFIG = {
-    API_BASE_URL: 'https://yorum.isletmemdijitalde.com/api',
+    API_BASE_URL: `${origin}/api`,
     CONTAINER_ID: 'trendyol-reviews-container',
-    CSS_URL: 'https://yorum.isletmemdijitalde.com/static/trendyol.css'
+    CSS_URL: `${origin}/static/trendyol.css`
   };
 
   // State management
