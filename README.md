@@ -7,6 +7,10 @@ Bu proje, WooCommerce ürün sayfalarında Trendyol yorumlarını göstermek iç
 ### Yerel Geliştirme
 
 ```bash
+# Repo'yu klonla
+git clone https://github.com/mucahitergul/TrendYorum.git
+cd TrendYorum
+
 # Bağımlılıkları yükle
 npm install
 
@@ -17,7 +21,7 @@ npm run dev
 http://localhost:3000
 ```
 
-### Hetzner Subdomain Kurulumu
+### Hetzner Subdomain Kurulumu (Tam Otomatik)
 
 #### Tek Komut Kurulum (Önerilen)
 
@@ -25,8 +29,17 @@ http://localhost:3000
 # 1. Sunucuya bağlan
 ssh root@YOUR_SERVER_IP
 
-# 2. Hızlı kurulum script'ini çalıştır
-wget https://raw.githubusercontent.com/YOUR_REPO/main/quick-install.sh
+# 2. Otomatik kurulum (GitHub'dan tüm dosyalar otomatik indirilir)
+git clone https://github.com/mucahitergul/TrendYorum.git
+cd TrendYorum
+chmod +x auto-deploy-subdomain.sh
+./auto-deploy-subdomain.sh
+```
+
+#### Alternatif: Hızlı Kurulum Script'i
+
+```bash
+wget https://raw.githubusercontent.com/mucahitergul/TrendYorum/main/quick-install.sh
 chmod +x quick-install.sh
 ./quick-install.sh
 ```
@@ -35,14 +48,14 @@ chmod +x quick-install.sh
 
 **Seçenek 1: Otomatik Subdomain Kurulumu**
 ```bash
-wget https://raw.githubusercontent.com/YOUR_REPO/main/auto-deploy-subdomain.sh
+wget https://raw.githubusercontent.com/mucahitergul/TrendYorum/main/auto-deploy-subdomain.sh
 chmod +x auto-deploy-subdomain.sh
 ./auto-deploy-subdomain.sh
 ```
 
 **Seçenek 2: Geleneksel Kurulum**
 ```bash
-wget https://raw.githubusercontent.com/YOUR_REPO/main/deploy.sh
+wget https://raw.githubusercontent.com/mucahitergul/TrendYorum/main/deploy.sh
 chmod +x deploy.sh
 ./deploy.sh
 ```
@@ -101,6 +114,10 @@ Port: 5432
 Database: trendyol_reviews
 Username: your_user
 Password: your_password
+
+# Uygulama Bilgileri
+Kullanıcı: trendyol
+Dizin: /home/trendyol/app
 
 # SSL Bilgileri
 Email: admin@example.com
@@ -184,6 +201,7 @@ Script otomatik olarak WooCommerce ürün SKU'sunu algılar:
 
 ## ✨ Özellikler
 
+### Uygulama Özellikleri
 - **🔍 Akıllı Arama**: Yorumlarda gerçek zamanlı arama
 - **📊 Sıralama**: Tarih, puan ve önerilen sıralama seçenekleri
 - **🖼️ Fotoğraf Galerisi**: Müşteri fotoğrafları ile interaktif galeri
@@ -191,9 +209,14 @@ Script otomatik olarak WooCommerce ürün SKU'sunu algılar:
 - **⚡ Performans**: CDN optimizasyonu ve lazy loading
 - **🔄 Sayfalama**: Infinite scroll ve "Daha Fazla Yükle" özelliği
 - **🌐 Türkçe Destek**: DD.MM.YYYY tarih formatı dahil
-- **🔒 Güvenlik**: XSS koruması ve güvenlik başlıkları
+
+### Kurulum Özellikleri
+- **🚀 Tam Otomatik**: GitHub'dan otomatik dosya indirme
+- **🔒 Güvenlik**: SSL, firewall, güvenlik başlıkları
 - **🗄️ Uzak Veritabanı**: PostgreSQL desteği
 - **🌐 Subdomain**: Ayrı subdomain'de çalışma
+- **📦 Basit Yapı**: `/home/trendyol/app/` - tek dizin
+- **🔄 Otomatik Backup**: Günlük yedekleme sistemi
 
 ## 🎯 Demo
 
@@ -266,8 +289,8 @@ GET https://reviews.example.com/api/reviews?sku={PRODUCT_SKU}
 
 ```bash
 # Proje klonla
-git clone https://github.com/YOUR_REPO/trendyol-reviews.git
-cd trendyol-reviews
+git clone https://github.com/mucahitergul/TrendYorum.git
+cd TrendYorum
 
 # Environment dosyası oluştur
 cp .env.example .env.local
@@ -313,7 +336,7 @@ nslookup reviews.example.com
 psql -h DB_HOST -p DB_PORT -U DB_USER -d DB_NAME
 
 # .env.local kontrolü
-cat /home/trendyol-app/apps/trendyol-reviews/.env.local
+cat /home/trendyol/app/.env.local
 ```
 
 **3. SSL Sertifikası Sorunu**
@@ -334,7 +357,7 @@ pm2 status
 pm2 logs trendyol-reviews
 
 # Manuel test
-cd /home/trendyol-app/apps/trendyol-reviews
+cd /home/trendyol/app
 npm start
 ```
 
@@ -406,16 +429,16 @@ nano /etc/ssh/sshd_config
 Kurulum otomatik olarak backup sistemi kurar:
 ```bash
 # Backup script'i
-/home/trendyol-app/backup.sh
+/home/trendyol/backup.sh
 
 # Crontab job'u (günlük 02:00)
-0 2 * * * /home/trendyol-app/backup.sh
+0 2 * * * /home/trendyol/backup.sh
 ```
 
 ### Manuel Backup
 ```bash
 # Uygulama backup'ı
-tar -czf backup_$(date +%Y%m%d).tar.gz /home/trendyol-app/apps/
+tar -czf backup_$(date +%Y%m%d).tar.gz /home/trendyol/app/
 
 # Veritabanı backup'ı (uzak sunucuda)
 pg_dump -h $DB_HOST -U $DB_USER $DB_NAME > backup_$(date +%Y%m%d).sql
@@ -426,7 +449,7 @@ pg_dump -h $DB_HOST -U $DB_USER $DB_NAME > backup_$(date +%Y%m%d).sql
 ### Uygulama Güncellemesi
 ```bash
 # Proje dizinine git
-cd /home/trendyol-app/apps/trendyol-reviews
+cd /home/trendyol/app
 
 # Güncellemeleri çek
 git pull origin main
@@ -457,7 +480,7 @@ certbot renew
 ## 📞 Destek
 
 ### Kurulum Desteği
-- **GitHub Issues**: https://github.com/YOUR_REPO/issues
+- **GitHub Issues**: https://github.com/mucahitergul/TrendYorum/issues
 - **Dokümantasyon**: Bu README ve ilgili .md dosyaları
 - **Email**: support@example.com
 

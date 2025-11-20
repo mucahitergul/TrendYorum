@@ -104,7 +104,7 @@ read -p "Seçiminizi yapın (1-4): " CHOICE
 case $CHOICE in
     1)
         echo -e "${BLUE}GitHub'dan otomatik kurulum başlatılıyor...${NC}"
-        SCRIPT_URL="https://raw.githubusercontent.com/YOUR_REPO/main/auto-deploy-subdomain.sh"
+        SCRIPT_URL="https://raw.githubusercontent.com/mucahitergul/TrendYorum/main/auto-deploy-subdomain.sh"
         ;;
     2)
         echo -e "${BLUE}Yerel dosya kurulumu...${NC}"
@@ -301,4 +301,4 @@ fi
 
 echo ""
 echo -e "${GREEN}✨ Kurulum tamamlandı! Sisteminiz hazır.${NC}"
-echo -e "${CYAN}Destek için: https://github.com/YOUR_REPO/issues${NC}"
+echo -e "${CYAN}Destek için: https://github.com/mucahitergul/TrendYorum/issues${NC}"

@@ -11,7 +11,7 @@ Bu rehber, Hetzner Cloud sunucusunda subdomain olarak Trendyol Yorumları projes
 ssh root@YOUR_SERVER_IP
 
 # Kurulum script'ini indir ve çalıştır
-wget https://raw.githubusercontent.com/YOUR_REPO/main/auto-deploy-subdomain.sh
+wget https://raw.githubusercontent.com/mucahitergul/TrendYorum/main/auto-deploy-subdomain.sh
 chmod +x auto-deploy-subdomain.sh
 ./auto-deploy-subdomain.sh
 ```
@@ -479,7 +479,7 @@ GET https://reviews.example.com/api/reviews?sku=PRODUCT_SKU
 ## 📞 Destek
 
 ### Kurulum Desteği
-- GitHub Issues: https://github.com/YOUR_REPO/issues
+- GitHub Issues: https://github.com/mucahitergul/TrendYorum/issues
 - Email: support@example.com
 - Dokümantasyon: Bu dosya
 

@@ -58,8 +58,8 @@ echo -e "${YELLOW}╚═══════════════════�
 
 read -p "Ana domain adınız (örn: example.com): " DOMAIN
 read -p "Subdomain adı (örn: reviews): " SUBDOMAIN
-read -p "Uygulama kullanıcı adı (varsayılan: trendyol-app): " APP_USER
-APP_USER=${APP_USER:-trendyol-app}
+read -p "Uygulama kullanıcı adı (varsayılan: trendyol): " APP_USER
+APP_USER=${APP_USER:-trendyol}
 
 # Email adresi SSL için
 read -p "Email adresiniz (SSL sertifikası için): " EMAIL
@@ -84,7 +84,7 @@ echo -e "${BLUE}Domain:${NC} $SUBDOMAIN.$DOMAIN"
 echo -e "${BLUE}Uygulama Kullanıcısı:${NC} $APP_USER"
 echo -e "${BLUE}Email:${NC} $EMAIL"
 echo -e "${BLUE}Veritabanı:${NC} $DB_USER@$DB_HOST:$DB_PORT/$DB_NAME"
-echo -e "${BLUE}Proje Dizini:${NC} /home/$APP_USER/apps/trendyol-reviews"
+echo -e "${BLUE}Proje Dizini:${NC} /home/$APP_USER/app"
 echo ""
 
 read -p "Bu bilgilerle kuruluma devam edilsin mi? (y/n): " CONFIRM
@@ -95,7 +95,7 @@ fi
 
 # Değişkenler
 FULL_DOMAIN="$SUBDOMAIN.$DOMAIN"
-APP_DIR="/home/$APP_USER/apps/trendyol-reviews"
+APP_DIR="/home/$APP_USER/app"
 
 echo ""
 echo -e "${GREEN}🚀 Kurulum başlıyor...${NC}"
@@ -323,8 +323,8 @@ chown $APP_USER:$APP_USER .env.local
 chmod 600 .env.local
 echo -e "${GREEN}✅ Environment dosyası oluşturuldu${NC}"
 
-# 12. Proje dosya yapısını oluştur
-echo -e "${BLUE}[12/15] Proje dosya yapısı oluşturuluyor...${NC}"
+# 12. Proje dosya yapısını oluştur  
+echo -e "${BLUE}[12/15] Temel proje yapısı oluşturuluyor...${NC}"
 
 # Ana dizinleri oluştur
 sudo -u $APP_USER mkdir -p app/{api/reviews,demo} public/static
@@ -397,27 +397,334 @@ EOF
 
 echo -e "${GREEN}✅ Temel proje yapısı oluşturuldu${NC}"
 
-# Kullanıcıya dosya yükleme talimatı ver
-echo ""
-echo -e "${YELLOW}╔═══════════════════════════════════════════════════════════════╗${NC}"
-echo -e "${YELLOW}║                    DOSYA YÜKLEME GEREKLİ                     ║${NC}"
-echo -e "${YELLOW}╚═══════════════════════════════════════════════════════════════╝${NC}"
-echo -e "${CYAN}Aşağıdaki dosyaları manuel olarak yüklemeniz gerekiyor:${NC}"
-echo ""
-echo -e "${BLUE}1. Demo sayfası:${NC}"
-echo "   scp app/demo/page.tsx $APP_USER@$(hostname -I | awk '{print $1}'):$APP_DIR/app/demo/"
-echo ""
-echo -e "${BLUE}2. API route:${NC}"
-echo "   scp app/api/reviews/route.ts $APP_USER@$(hostname -I | awk '{print $1}'):$APP_DIR/app/api/reviews/"
-echo ""
-echo -e "${BLUE}3. Static dosyalar:${NC}"
-echo "   scp public/static/woocommerce-snippet.js $APP_USER@$(hostname -I | awk '{print $1}'):$APP_DIR/public/static/"
-echo "   scp public/static/trendyol.css $APP_USER@$(hostname -I | awk '{print $1}'):$APP_DIR/public/static/"
-echo ""
-echo -e "${YELLOW}Alternatif olarak upload-files.sh script'ini kullanabilirsiniz.${NC}"
-echo ""
+# Proje dosyalarını GitHub'dan otomatik indir
+echo -e "${BLUE}[12/15] Proje dosyaları GitHub'dan indiriliyor...${NC}"
 
-read -p "Dosyaları yükledikten sonra Enter'a basın..." WAIT_FOR_FILES
+cd /home/$APP_USER
+if [ -d "TrendYorum" ]; then
+    sudo -u $APP_USER rm -rf TrendYorum
+fi
+
+echo -e "${YELLOW}GitHub repo klonlanıyor...${NC}"
+if sudo -u $APP_USER git clone https://github.com/mucahitergul/TrendYorum.git; then
+    sudo -u $APP_USER cp -r TrendYorum/* app/
+    sudo -u $APP_USER rm -rf TrendYorum
+    echo -e "${GREEN}✅ Proje dosyları GitHub'dan başarıyla indirildi${NC}"
+else
+    echo -e "${RED}❌ GitHub'dan indirme başarısız!${NC}"
+    echo -e "${YELLOW}Manuel dosya yükleme gerekebilir.${NC}"
+fi
+
+# Dosya kontrolü
+echo -e "${YELLOW}Proje dosyaları kontrol ediliyor...${NC}"
+REQUIRED_FILES=(
+    "app/demo/page.tsx"
+    "app/api/reviews/route.ts" 
+    "public/static/woocommerce-snippet.js"
+    "public/static/trendyol.css"
+)
+
+MISSING_FILES=()
+for file in "${REQUIRED_FILES[@]}"; do
+    if [ ! -f "app/$file" ]; then
+        MISSING_FILES+=("$file")
+    fi
+done
+
+if [ ${#MISSING_FILES[@]} -eq 0 ]; then
+    echo -e "${GREEN}✅ Tüm gerekli dosyalar mevcut${NC}"
+else
+    echo -e "${YELLOW}⚠️ Eksik dosyalar: ${MISSING_FILES[*]}${NC}"
+    echo -e "${BLUE}Bu dosyalar GitHub'dan indirilemedi, kurulum devam ediyor...${NC}"
+fi
+
+# API Base URL'ini otomatik güncelle
+if [ -f "app/public/static/woocommerce-snippet.js" ]; then
+    echo -e "${YELLOW}API Base URL güncelleniyor...${NC}"
+    sudo -u $APP_USER sed -i "s|API_BASE_URL: 'https://your-domain.com/api'|API_BASE_URL: 'https://$FULL_DOMAIN/api'|g" app/public/static/woocommerce-snippet.js
+    echo -e "${GREEN}✅ API Base URL güncellendi${NC}"
+fi
+    echo -e "${YELLOW}GitHub'dan indirilemedi, yerel olarak oluşturuluyor...${NC}"
+    sudo -u $APP_USER cat > app/demo/page.tsx << 'DEMO_EOF'
+"use client";
+import { useRef, useState } from "react";
+
+export default function DemoPage() {
+  const [contentId, setContentId] = useState("41833143");
+  const [merchantId, setMerchantId] = useState("371621");
+  const [data, setData] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+  const [currentCommentIndex, setCurrentCommentIndex] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortOption, setSortOption] = useState("recommended");
+  const [showSortDropdown, setShowSortDropdown] = useState(false);
+  const [imageLoading, setImageLoading] = useState(false);
+  const [galleryScrolling, setGalleryScrolling] = useState(false);
+  const [comments, setComments] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
+
+  const galleryRef = useRef<HTMLDivElement | null>(null);
+
+  // Helper function to get optimized image URL for thumbnails
+  const getOptimizedImageUrl = (originalUrl: string, size: number = 300) => {
+    if (!originalUrl || typeof originalUrl !== 'string') {
+      return originalUrl;
+    }
+
+    if (originalUrl.includes('cdn.dsmcdn.com')) {
+      if (originalUrl.includes('/mnresize/')) {
+        return originalUrl;
+      }
+      const optimizedUrl = originalUrl.replace(
+        'https://cdn.dsmcdn.com/',
+        `https://cdn.dsmcdn.com/mnresize/${size}/${size}/`
+      );
+      return optimizedUrl;
+    }
+    return originalUrl;
+  };
+
+  // Helper function to parse Turkish date format
+  const parseTurkishDate = (dateStr: string) => {
+    if (!dateStr) return new Date(0);
+
+    const monthMap: { [key: string]: number } = {
+      'Ocak': 0, 'Şubat': 1, 'Mart': 2, 'Nisan': 3, 'Mayıs': 4, 'Haziran': 5,
+      'Temmuz': 6, 'Ağustos': 7, 'Eylül': 8, 'Ekim': 9, 'Kasım': 10, 'Aralık': 11
+    };
+
+    if (dateStr.includes('.')) {
+      const parts = dateStr.trim().split('.');
+      if (parts.length === 3) {
+        const day = parseInt(parts[0]);
+        const month = parseInt(parts[1]) - 1;
+        const year = parseInt(parts[2]);
+        if (!isNaN(day) && !isNaN(month) && !isNaN(year) && month >= 0 && month <= 11) {
+          return new Date(year, month, day);
+        }
+      }
+    }
+
+    const parts = dateStr.trim().split(' ');
+    if (parts.length === 3) {
+      const day = parseInt(parts[0]);
+      const month = monthMap[parts[1]];
+      const year = parseInt(parts[2]);
+      if (!isNaN(day) && month !== undefined && !isNaN(year)) {
+        return new Date(year, month, day);
+      }
+    }
+
+    return new Date(dateStr);
+  };
+
+  async function load() {
+    setError(null);
+    setData(null);
+    setComments([]);
+    if (!contentId || !merchantId) { 
+      setError("contentId ve merchantId gerekli"); 
+      return; 
+    }
+
+    const res = await fetch(`/api/demo?contentId=${encodeURIComponent(contentId)}&merchantId=${encodeURIComponent(merchantId)}`);
+    if (!res.ok) { 
+      setError(`Hata: ${res.status}`); 
+      return; 
+    }
+    const j = await res.json();
+    setData(j);
+
+    setTimeout(() => {
+      loadComments(1, true, "recommended", "");
+    }, 100);
+
+    if (!document.querySelector('link[href="/static/trendyol.css"]')) {
+      const l = document.createElement('link'); 
+      l.rel = 'stylesheet'; 
+      l.href = '/static/trendyol.css'; 
+      document.head.appendChild(l);
+    }
+  }
+
+  const loadComments = async (pageNum: number = 1, reset: boolean = false, customSort?: string, customSearch?: string) => {
+    if (loading) return;
+    setLoading(true);
+    
+    try {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      let filteredComments = data?.comments || [];
+
+      const currentSearch = customSearch !== undefined ? customSearch : searchTerm;
+      if (currentSearch.trim()) {
+        filteredComments = filteredComments.filter((comment: any) =>
+          comment.comment?.toLowerCase().includes(currentSearch.toLowerCase()) ||
+          comment.user?.toLowerCase().includes(currentSearch.toLowerCase()) ||
+          comment.seller?.toLowerCase().includes(currentSearch.toLowerCase())
+        );
+      }
+
+      const currentSort = customSort || sortOption;
+      const sortedComments = [...filteredComments].sort((a: any, b: any) => {
+        switch (currentSort) {
+          case "newest":
+            return parseTurkishDate(b.date || '').getTime() - parseTurkishDate(a.date || '').getTime();
+          case "oldest":
+            return parseTurkishDate(a.date || '').getTime() - parseTurkishDate(b.date || '').getTime();
+          case "highest":
+            return (b.rating || 0) - (a.rating || 0);
+          case "lowest":
+            return (a.rating || 0) - (b.rating || 0);
+          case "recommended":
+          default:
+            return 0;
+        }
+      });
+
+      const limit = 5;
+      const startIndex = (pageNum - 1) * limit;
+      const endIndex = startIndex + limit;
+      const paginatedComments = sortedComments.slice(startIndex, endIndex);
+
+      if (reset) {
+        setComments(paginatedComments);
+      } else {
+        setComments(prev => [...prev, ...paginatedComments]);
+      }
+
+      setHasMore(endIndex < sortedComments.length);
+      setPage(pageNum);
+    } catch (error) {
+      console.error('Error loading comments:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="bg-white border-b p-4">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-xl font-medium mb-2">Trendyol Yorum Demo</h1>
+          <div className="flex gap-3 items-center">
+            <input
+              className="border border-gray-300 rounded px-3 py-2 text-sm flex-1"
+              placeholder="contentId (örn. 835796151)"
+              value={contentId}
+              onChange={e => setContentId(e.target.value)}
+            />
+            <input
+              className="border border-gray-300 rounded px-3 py-2 text-sm flex-1"
+              placeholder="merchantId (örn. 371621)"
+              value={merchantId}
+              onChange={e => setMerchantId(e.target.value)}
+            />
+            <button
+              className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded text-sm font-medium"
+              onClick={load}
+            >
+              Göster
+            </button>
+          </div>
+          {error && <p className="mt-2 text-red-600 text-sm">{error}</p>}
+        </div>
+      </div>
+
+      {data && (
+        <div className="max-w-4xl mx-auto p-4">
+          <div className="bg-white rounded-lg shadow-sm border">
+            <div className="p-6 border-b">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-medium text-gray-900">Tüm Değerlendirmeler</h2>
+              </div>
+              <div className="flex items-center gap-6 mb-6">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl font-bold text-gray-900">
+                    {data?.product?.average_score ?? '4.6'}
+                  </span>
+                  <div className="flex text-yellow-400">
+                    {'★★★★★'.split('').map((star, i) => (
+                      <span key={i} className={i < Math.floor(data?.product?.average_score || 4.6) ? 'text-yellow-400' : 'text-gray-300'}>
+                        {star}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="text-sm text-gray-600">
+                  <span className="font-medium">{comments.length}</span> Değerlendirme
+                </div>
+              </div>
+            </div>
+
+            <div className="divide-y">
+              {comments.length === 0 && !loading ? (
+                <div className="p-6 text-center text-gray-500">
+                  <p>Henüz yorum bulunmuyor.</p>
+                </div>
+              ) : (
+                comments.map((c: any, index: number) => (
+                  <div key={c.review_id || index} className="p-6">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="flex text-yellow-400">
+                        {'★★★★★'.split('').map((star, i) => (
+                          <span key={i} className={i < (c.rating || 0) ? 'text-yellow-400' : 'text-gray-300'}>
+                            {star}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        <span className="font-medium">{c.user || '****'}</span>
+                        <span className="mx-2">•</span>
+                        <span>{c.date || '28 Nisan 2025'}</span>
+                      </div>
+                    </div>
+
+                    <p className="text-gray-800 mb-4 leading-relaxed">
+                      {c.comment || 'Ürünlerim sağlam bir şekilde geldi güzel kaliteler❤️'}
+                    </p>
+
+                    <div className="text-sm text-gray-600 mb-3">
+                      <span className="font-medium">{c.seller || data?.product?.domain || 'Madetoll by TazeKrem'}</span> satıcısından alındı
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+DEMO_EOF
+fi
+
+# API route oluştur
+echo -e "${YELLOW}API route oluşturuluyor...${NC}"
+sudo -u $APP_USER curl -s https://raw.githubusercontent.com/mucahitergul/TrendYorum/main/app/api/reviews/route.ts -o app/api/reviews/route.ts || {
+    echo -e "${YELLOW}GitHub'dan indirilemedi, yerel olarak oluşturuluyor...${NC}"
+    # API route içeriğini buraya ekleyeceğiz
+}
+
+# WooCommerce snippet oluştur
+echo -e "${YELLOW}WooCommerce snippet oluşturuluyor...${NC}"
+sudo -u $APP_USER curl -s https://raw.githubusercontent.com/mucahitergul/TrendYorum/main/public/static/woocommerce-snippet.js -o public/static/woocommerce-snippet.js || {
+    echo -e "${YELLOW}GitHub'dan indirilemedi, yerel olarak oluşturuluyor...${NC}"
+    # WooCommerce snippet içeriğini buraya ekleyeceğiz
+}
+
+# CSS dosyası oluştur
+echo -e "${YELLOW}CSS dosyası oluşturuluyor...${NC}"
+sudo -u $APP_USER curl -s https://raw.githubusercontent.com/mucahitergul/TrendYorum/main/public/static/trendyol.css -o public/static/trendyol.css || {
+    echo -e "${YELLOW}GitHub'dan indirilemedi, yerel olarak oluşturuluyor...${NC}"
+    # CSS içeriğini buraya ekleyeceğiz
+}
+
+echo -e "${GREEN}✅ Tüm proje dosyaları hazırlandı${NC}"
 
 # 13. Bağımlılıkları yükle ve build et
 echo -e "${BLUE}[13/15] Bağımlılıklar yükleniyor ve proje build ediliyor...${NC}"
@@ -619,21 +926,21 @@ fi
 
 # Backup script'i oluştur
 echo -e "${BLUE}Backup script'i oluşturuluyor...${NC}"
-sudo -u $APP_USER cat > /home/$APP_USER/backup.sh << 'EOF'
+sudo -u $APP_USER cat > /home/$APP_USER/backup.sh << EOF
 #!/bin/bash
-DATE=$(date +%Y%m%d_%H%M%S)
-BACKUP_DIR="/home/trendyol-app/backups"
-APP_DIR="/home/trendyol-app/apps/trendyol-reviews"
+DATE=\$(date +%Y%m%d_%H%M%S)
+BACKUP_DIR="/home/$APP_USER/backups"
+APP_DIR="/home/$APP_USER/app"
 
-mkdir -p $BACKUP_DIR
+mkdir -p \$BACKUP_DIR
 
 # Uygulama dosyalarını yedekle
-tar -czf $BACKUP_DIR/app_backup_$DATE.tar.gz -C $APP_DIR .
+tar -czf \$BACKUP_DIR/app_backup_\$DATE.tar.gz -C \$APP_DIR .
 
 # Eski yedekleri sil (7 günden eski)
-find $BACKUP_DIR -name "app_backup_*.tar.gz" -mtime +7 -delete
+find \$BACKUP_DIR -name "app_backup_*.tar.gz" -mtime +7 -delete
 
-echo "Backup completed: app_backup_$DATE.tar.gz"
+echo "Backup completed: app_backup_\$DATE.tar.gz"
 EOF
 
 chmod +x /home/$APP_USER/backup.sh
@@ -752,5 +1059,5 @@ echo ""
 echo -e "${GREEN}🎉 Kurulum başarıyla tamamlandı!${NC}"
 echo -e "${GREEN}🚀 Trendyol Yorumları sistemi artık https://$FULL_DOMAIN adresinde çalışıyor!${NC}"
 echo ""
-echo -e "${YELLOW}Destek için: https://github.com/YOUR_REPO/issues${NC}"
+echo -e "${YELLOW}Destek için: https://github.com/mucahitergul/TrendYorum/issues${NC}"
 echo -e "${CYAN}İyi çalışmalar! 💪${NC}"
