@@ -16,22 +16,6 @@ cat > /etc/nginx/sites-available/$DOMAIN << 'EOF'
 server {
     listen 80;
     server_name yorum.isletmemdijitalde.com;
-    return 301 https://$server_name$request_uri;
-}
-
-server {
-    listen 443 ssl http2;
-    server_name yorum.isletmemdijitalde.com;
-
-    # SSL Configuration (will be updated by Certbot)
-    ssl_certificate /etc/letsencrypt/live/yorum.isletmemdijitalde.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/yorum.isletmemdijitalde.com/privkey.pem;
-    
-    # SSL Security
-    ssl_protocols TLSv1.2 TLSv1.3;
-    ssl_prefer_server_ciphers off;
-    ssl_session_cache shared:SSL:10m;
-    ssl_session_timeout 10m;
 
     # Security Headers
     add_header X-Frame-Options "SAMEORIGIN" always;
@@ -110,9 +94,11 @@ else
 fi
 
 # SSL sertifikası kur
-if [ ! -f "/etc/letsencrypt/live/$DOMAIN/fullchain.pem" ]; then
-    echo "SSL sertifikası kuruluyor..."
-    certbot --nginx -d $DOMAIN --non-interactive --agree-tos --email admin@$DOMAIN
+echo "SSL sertifikası kuruluyor..."
+if certbot --nginx -d $DOMAIN --non-interactive --agree-tos --email admin@$DOMAIN; then
+    echo "✅ SSL sertifikası başarıyla kuruldu"
+else
+    echo "⚠️ SSL sertifikası kurulamadı, HTTP olarak devam ediliyor"
 fi
 
 echo "🎉 Nginx konfigürasyonu düzeltildi!"
