@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
       const productResult = await client.query(productQuery, [sku]);
       
       let product = null;
-      if (productResult.rowCount > 0) {
+      if (productResult.rows.length > 0) {
         product = productResult.rows[0];
       }
       
@@ -59,8 +59,8 @@ export async function GET(request: NextRequest) {
       const reviewsResult = await client.query(reviewsQuery, [sku]);
       
       // Debug: Sonuç sayısını logla
-      console.log('API Debug - Bulunan yorum sayısı:', reviewsResult.rowCount);
-      if (reviewsResult.rowCount > 0) {
+      console.log('API Debug - Bulunan yorum sayısı:', reviewsResult.rows.length);
+      if (reviewsResult.rows.length > 0) {
         console.log('API Debug - İlk yorumun domain\'i:', reviewsResult.rows[0].domain);
       }
       
@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
       const formattedData = {
         product: {
           average_score: product?.average_score || 0,
-          total_comment_count: reviewsResult.rowCount || 0,
+          total_comment_count: reviewsResult.rows.length || 0,
           domain: 'Madetoll by TazeKrem'
         },
         comments: reviewsResult.rows.map((review: any) => ({

@@ -13,7 +13,7 @@ export async function GET(req: Request) {
         `SELECT sku, domain, average_score, total_comment_count FROM products WHERE content_id=$1 AND merchant_id=$2 ORDER BY updated_at DESC LIMIT 1`,
         [contentId, merchantId]
       );
-      if (p.rowCount === 0) return NextResponse.json({ error: 'Ürün bulunamadı' }, { status: 404 });
+      if (p.rows.length === 0) return NextResponse.json({ error: 'Ürün bulunamadı' }, { status: 404 });
       const { sku, domain, average_score, total_comment_count } = p.rows[0];
       const r = await client.query(
         `SELECT r.id, r.user_full_name, r.rating, r.comment, r.date_text, r.elit_customer,
