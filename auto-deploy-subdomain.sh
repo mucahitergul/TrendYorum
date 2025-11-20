@@ -401,18 +401,35 @@ echo -e "${GREEN}✅ Temel proje yapısı oluşturuldu${NC}"
 echo -e "${BLUE}[12/15] Proje dosyaları GitHub'dan indiriliyor...${NC}"
 
 cd /home/$APP_USER
-if [ -d "TrendYorum" ]; then
-    sudo -u $APP_USER rm -rf TrendYorum
-fi
+# Script'in çalıştırıldığı dizini kontrol et
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+echo -e "${BLUE}Script dizini: $SCRIPT_DIR${NC}"
 
-echo -e "${YELLOW}GitHub repo klonlanıyor...${NC}"
-if sudo -u $APP_USER git clone https://github.com/mucahitergul/TrendYorum.git; then
-    sudo -u $APP_USER cp -r TrendYorum/* app/
-    sudo -u $APP_USER rm -rf TrendYorum
-    echo -e "${GREEN}✅ Proje dosyları GitHub'dan başarıyla indirildi${NC}"
+# Eğer script TrendYorum dizininden çalıştırılıyorsa, o dosyaları kullan
+if [[ "$SCRIPT_DIR" == *"TrendYorum"* ]] && [ -f "$SCRIPT_DIR/package.json" ]; then
+    echo -e "${GREEN}✅ Mevcut TrendYorum dosyaları kullanılıyor${NC}"
+    echo -e "${YELLOW}Proje dosyaları kopyalanıyor...${NC}"
+    
+    # Dosyaları kopyala (izin sorunlarını önlemek için root olarak)
+    cp -r "$SCRIPT_DIR"/* app/ 2>/dev/null
+    chown -R $APP_USER:$APP_USER app/
+    
+    echo -e "${GREEN}✅ Proje dosyaları başarıyla kopyalandı${NC}"
 else
-    echo -e "${RED}❌ GitHub'dan indirme başarısız!${NC}"
-    echo -e "${YELLOW}Manuel dosya yükleme gerekebilir.${NC}"
+    echo -e "${YELLOW}TrendYorum dizininde değil, GitHub'dan indiriliyor...${NC}"
+    if [ -d "TrendYorum" ]; then
+        rm -rf TrendYorum
+    fi
+    
+    if git clone https://github.com/mucahitergul/TrendYorum.git; then
+        cp -r TrendYorum/* app/
+        chown -R $APP_USER:$APP_USER app/
+        rm -rf TrendYorum
+        echo -e "${GREEN}✅ Proje dosyaları GitHub'dan indirildi${NC}"
+    else
+        echo -e "${RED}❌ GitHub'dan indirme başarısız!${NC}"
+        exit 1
+    fi
 fi
 
 # Dosya kontrolü

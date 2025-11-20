@@ -29,11 +29,13 @@ http://localhost:3000
 # 1. Sunucuya bağlan
 ssh root@YOUR_SERVER_IP
 
-# 2. Otomatik kurulum (GitHub'dan tüm dosyalar otomatik indirilir)
+# 2. Repo'yu klonla ve kurulumu başlat
 git clone https://github.com/mucahitergul/TrendYorum.git
 cd TrendYorum
 chmod +x auto-deploy-subdomain.sh
 ./auto-deploy-subdomain.sh
+
+# Script otomatik olarak mevcut dosyaları kullanır, tekrar indirmez!
 ```
 
 #### Alternatif: Hızlı Kurulum Script'i
