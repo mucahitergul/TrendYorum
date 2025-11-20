@@ -36,39 +36,30 @@ export async function GET(request: NextRequest) {
       
       const productResult = await client.query(productQuery, [sku]);
       
-      if (productResult.rowCount === 0) {
-        // SKU bulunamadı, boş veri döndür
-        return NextResponse.json({
-          product: {
-            average_score: 0,
-            total_comment_count: 0,
-            domain: 'Madetoll by TazeKrem'
-          },
-          comments: []
-        }, { headers: corsHeaders });
+      let product = null;
+      if (productResult.rowCount > 0) {
+        product = productResult.rows[0];
       }
-
-      const product = productResult.rows[0];
       
-      // Yorumları çek
+      // Yorumları çek (domain eşleştirmesi olmadan, sadece SKU ile)
       const reviewsQuery = `
         SELECT r.id, r.user_full_name, r.rating, r.comment, r.date_text, r.elit_customer,
                COALESCE(json_agg(rp.url) FILTER (WHERE rp.url IS NOT NULL), '[]') as photos
         FROM reviews r
         LEFT JOIN review_photos rp ON rp.review_id = r.id
-        WHERE r.sku = $1 AND r.domain = $2
+        WHERE r.sku = $1
         GROUP BY r.id, r.user_full_name, r.rating, r.comment, r.date_text, r.elit_customer
         ORDER BY r.id DESC
         LIMIT 200
       `;
       
-      const reviewsResult = await client.query(reviewsQuery, [sku, product.domain]);
+      const reviewsResult = await client.query(reviewsQuery, [sku]);
       
       // Veriyi format et
       const formattedData = {
         product: {
-          average_score: product.average_score || 0,
-          total_comment_count: product.total_comment_count || 0,
+          average_score: product?.average_score || 0,
+          total_comment_count: reviewsResult.rowCount || 0,
           domain: 'Madetoll by TazeKrem'
         },
         comments: reviewsResult.rows.map((review: any) => ({
