@@ -99,7 +99,7 @@ cd /home/trendyol-app/apps
 ### Git Repository Clone (Eğer Git kullanıyorsanız)
 ```bash
 # Git repository'niz varsa:
-git clone https://github.com/YOUR_USERNAME/trendyol-reviews.git
+git clone https://github.com/mucahitergul/TrendYorum.git
 cd trendyol-reviews
 
 # Veya manuel dosya yükleme için:
@@ -171,7 +171,7 @@ module.exports = {
     name: 'trendyol-reviews',
     script: 'npm',
     args: 'start',
-    cwd: '/home/trendyol-app/apps/trendyol-reviews',
+    cwd: '/home/trendyol-app/apps/TrendYorum/app',
     instances: 1,
     autorestart: true,
     watch: false,
