@@ -473,6 +473,13 @@ echo -e "${BLUE}Çalışma dizini: $(pwd)${NC}"
 
 sudo -u $APP_USER npm install
 
+# Playwright browser'ları yükle (eğer Playwright varsa)
+if grep -q "playwright" package.json; then
+    echo -e "${BLUE}Playwright browser'ları yükleniyor...${NC}"
+    sudo -u $APP_USER npx playwright install chromium
+    echo -e "${GREEN}✅ Playwright browser'ları yüklendi${NC}"
+fi
+
 # Build işlemi
 echo -e "${BLUE}Proje build ediliyor...${NC}"
 if ! sudo -u $APP_USER npm run build; then

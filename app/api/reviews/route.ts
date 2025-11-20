@@ -1,11 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// CORS headers
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+};
+
+export async function OPTIONS(request: NextRequest) {
+  return new Response(null, { status: 200, headers: corsHeaders });
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const sku = searchParams.get('sku');
 
   if (!sku) {
-    return NextResponse.json({ error: 'SKU parameter is required' }, { status: 400 });
+    return NextResponse.json({ error: 'SKU parameter is required' }, { status: 400, headers: corsHeaders });
   }
 
   try {
@@ -32,7 +43,7 @@ export async function GET(request: NextRequest) {
           domain: 'Madetoll by TazeKrem'
         },
         comments: []
-      });
+      }, { headers: corsHeaders });
     }
 
     // Trendyol API'sinden veri çek
@@ -82,7 +93,7 @@ export async function GET(request: NextRequest) {
       })) || []
     };
 
-    return NextResponse.json(formattedData);
+    return NextResponse.json(formattedData, { headers: corsHeaders });
 
   } catch (error) {
     console.error('Error fetching reviews:', error);
@@ -95,6 +106,6 @@ export async function GET(request: NextRequest) {
         domain: 'Madetoll by TazeKrem'
       },
       comments: []
-    });
+    }, { headers: corsHeaders });
   }
 }
