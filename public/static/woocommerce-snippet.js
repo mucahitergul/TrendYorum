@@ -1,11 +1,11 @@
-(function() {
+(function () {
   'use strict';
 
   // Configuration
   const CONFIG = {
-    API_BASE_URL: 'https://your-domain.com/api', // API base URL'inizi buraya yazın
+    API_BASE_URL: 'https://yorum.isletmemdijitalde.com/api',
     CONTAINER_ID: 'trendyol-reviews-container',
-    CSS_URL: '/static/trendyol.css'
+    CSS_URL: 'https://yorum.isletmemdijitalde.com/static/trendyol.css'
   };
 
   // State management
@@ -180,14 +180,14 @@
 
   // UI Rendering functions
   function createStarRating(rating) {
-    return '★★★★★'.split('').map((star, i) => 
+    return '★★★★★'.split('').map((star, i) =>
       `<span class="${i < (rating || 0) ? 'text-yellow-400' : 'text-gray-300'}">${star}</span>`
     ).join('');
   }
 
   function renderGallery() {
     const photos = Array.from(new Set(getFilteredCommentsForGallery().flatMap(c => c.photos || []))).slice(0, 30);
-    
+
     return `
       <div class="p-6 border-b">
         <div class="flex items-center justify-between mb-4">
@@ -279,7 +279,7 @@
 
   function renderLoadMore() {
     if (!state.hasMore) return '';
-    
+
     return `
       <div class="p-6 text-center">
         ${state.loading ? `
@@ -298,10 +298,10 @@
 
   function renderModal() {
     if (!state.modalOpen || !state.comments[state.currentCommentIndex]) return '';
-    
+
     const comment = state.comments[state.currentCommentIndex];
     const photo = comment.photos[state.currentPhotoIndex];
-    
+
     return `
       <div id="photo-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
         <div class="relative max-w-4xl max-h-[90vh] w-full mx-4 flex bg-white rounded-lg overflow-hidden">
@@ -498,17 +498,17 @@
     document.querySelectorAll('.gallery-nav-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         if (state.galleryScrolling) return;
-        
+
         state.galleryScrolling = true;
         const container = document.querySelector('.gallery-container');
         const itemWidth = 92;
         const scrollAmount = itemWidth;
-        
+
         container.scrollBy({
           left: btn.dataset.direction === 'next' ? scrollAmount : -scrollAmount,
           behavior: 'smooth'
         });
-        
+
         setTimeout(() => state.galleryScrolling = false, 300);
       });
     });
@@ -648,32 +648,32 @@
   // WooCommerce Integration
   function getProductSKU() {
     // Try multiple methods to get WooCommerce product SKU
-    
+
     // Method 1: Check for SKU in product data
     const skuElement = document.querySelector('.sku');
     if (skuElement) {
       return skuElement.textContent.trim();
     }
-    
+
     // Method 2: Check for SKU in product meta
     const skuMeta = document.querySelector('[data-sku]');
     if (skuMeta) {
       return skuMeta.dataset.sku;
     }
-    
+
     // Method 3: Check for product ID and use as fallback
     const productId = document.querySelector('[data-product_id]');
     if (productId) {
       return productId.dataset.product_id;
     }
-    
+
     // Method 4: Try to extract from URL or page content
     const urlParams = new URLSearchParams(window.location.search);
     const productParam = urlParams.get('product') || urlParams.get('p');
     if (productParam) {
       return productParam;
     }
-    
+
     return null;
   }
 
@@ -681,18 +681,18 @@
   async function init() {
     // Load CSS
     loadCSS();
-    
+
     // Create container if it doesn't exist
     let container = document.getElementById(CONFIG.CONTAINER_ID);
     if (!container) {
       container = document.createElement('div');
       container.id = CONFIG.CONTAINER_ID;
-      
+
       // Try to find a good place to insert the reviews
       const productTabs = document.querySelector('.woocommerce-tabs');
       const productSummary = document.querySelector('.product-summary');
       const singleProduct = document.querySelector('.single-product');
-      
+
       if (productTabs) {
         productTabs.parentNode.insertBefore(container, productTabs.nextSibling);
       } else if (productSummary) {
@@ -703,16 +703,16 @@
         document.body.appendChild(container);
       }
     }
-    
+
     // Get product SKU
     const sku = getProductSKU();
     if (!sku) {
       console.warn('Trendyol Reviews: Product SKU not found');
       return;
     }
-    
+
     console.log('Trendyol Reviews: Loading reviews for SKU:', sku);
-    
+
     // Load product data
     const data = await loadProductData(sku);
     if (data) {
