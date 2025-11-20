@@ -41,19 +41,28 @@ export async function GET(request: NextRequest) {
         product = productResult.rows[0];
       }
       
+      // Debug: SKU'yu logla
+      console.log('API Debug - Aranan SKU:', sku);
+      
       // Yorumları çek (domain eşleştirmesi olmadan, sadece SKU ile)
       const reviewsQuery = `
-        SELECT r.id, r.user_full_name, r.rating, r.comment, r.date_text, r.elit_customer,
+        SELECT r.id, r.user_full_name, r.rating, r.comment, r.date_text, r.elit_customer, r.domain,
                COALESCE(json_agg(rp.url) FILTER (WHERE rp.url IS NOT NULL), '[]') as photos
         FROM reviews r
         LEFT JOIN review_photos rp ON rp.review_id = r.id
         WHERE r.sku = $1
-        GROUP BY r.id, r.user_full_name, r.rating, r.comment, r.date_text, r.elit_customer
+        GROUP BY r.id, r.user_full_name, r.rating, r.comment, r.date_text, r.elit_customer, r.domain
         ORDER BY r.id DESC
         LIMIT 200
       `;
       
       const reviewsResult = await client.query(reviewsQuery, [sku]);
+      
+      // Debug: Sonuç sayısını logla
+      console.log('API Debug - Bulunan yorum sayısı:', reviewsResult.rowCount);
+      if (reviewsResult.rowCount > 0) {
+        console.log('API Debug - İlk yorumun domain\'i:', reviewsResult.rows[0].domain);
+      }
       
       // Veriyi format et
       const formattedData = {
