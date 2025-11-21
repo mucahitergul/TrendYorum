@@ -9,10 +9,6 @@
   color: #1f2937 !important;
 }
 
-#photo-modal {
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-}
-
 #trendyol-reviews-container *,
 #trendyol-reviews-container *::before,
 #trendyol-reviews-container *::after {
@@ -65,139 +61,6 @@
 
 #trendyol-reviews-container .gallery-nav-btn:hover {
   background-color: #f3f4f6 !important;
-}
-
-/* Modal Base Styles */
-#photo-modal {
-  backdrop-filter: blur(8px) !important;
-  position: fixed !important;
-  inset: 0 !important;
-  background-color: rgba(0, 0, 0, 0.9) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  z-index: 99999 !important;
-  animation: fadeIn 0.2s ease-out !important;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-/* Desktop Modal */
-#photo-modal>div {
-  display: flex !important;
-  max-width: 1000px !important;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
-  border-radius: 5px !important;
-  overflow: hidden !important;
-  flex-shrink: 0 !important;
-}
-
-#photo-modal .bg-black {
-  background-color: #000000 !important;
-  width: 600px !important;
-  height: 800px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  position: relative !important;
-  flex-shrink: 0 !important;
-}
-
-#photo-modal .bg-white {
-  background-color: #f8f8f8 !important;
-  width: 400px !important;
-  padding: 2rem !important;
-  overflow-y: auto !important;
-}
-
-/* Modal Controls */
-#photo-modal #modal-close {
-  background: transparent !important;
-  border: none !important;
-  padding: 0.5rem !important;
-  position: absolute !important;
-  top: 1rem !important;
-  right: 1rem !important;
-  z-index: 100 !important;
-  cursor: pointer !important;
-}
-
-#photo-modal #modal-close svg {
-  stroke: #000000 !important;
-  width: 24px !important;
-  height: 24px !important;
-}
-
-#photo-modal #modal-close:hover {
-  opacity: 0.7 !important;
-}
-
-/* Modal Navigation */
-#photo-modal .modal-nav-btn {
-  background-color: rgba(255, 255, 255, 0.9) !important;
-  border-radius: 50% !important;
-  width: 48px !important;
-  height: 48px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  transition: all 0.3s ease !important;
-  border: none !important;
-  cursor: pointer !important;
-  position: absolute !important;
-  top: 50% !important;
-  z-index: 30 !important;
-  padding: 0 !important;
-}
-
-#photo-modal .modal-nav-btn[data-direction="prev"] {
-  left: 1rem !important;
-  transform: translateY(-50%) !important;
-}
-
-#photo-modal .modal-nav-btn[data-direction="next"] {
-  right: 1rem !important;
-  transform: translateY(-50%) !important;
-}
-
-#photo-modal .modal-nav-btn:hover {
-  background-color: rgba(255, 255, 255, 1) !important;
-  transform: translateY(-50%) scale(1.1) !important;
-}
-
-#photo-modal .modal-nav-btn svg {
-  stroke: #000000 !important;
-  width: 24px !important;
-  height: 24px !important;
-}
-
-/* Modal Image */
-#photo-modal #modal-image {
-  max-width: 100% !important;
-  max-height: 100% !important;
-  object-fit: contain !important;
-  position: relative !important;
-  z-index: 10 !important;
-}
-
-/* Modal Loading */
-#photo-modal #modal-loading {
-  position: absolute !important;
-  inset: 0 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  background-color: rgba(0, 0, 0, 0.5) !important;
-  z-index: 25 !important;
 }
 
 /* Loading Animation */
@@ -290,15 +153,8 @@
   max-width: 1000px;
   max-height: 800px;
   background: white;
-  border-radius: 8px;
+  border-radius: 5px;
   overflow: hidden;
-}
-
-.modal-image-area {
-  width: 600px;
-  height: 800px;
-  min-width: 600px;
-  flex-shrink: 0;
 }
 
 .modal-comment-area {
@@ -494,7 +350,7 @@
 }
 
 #trendyol-reviews-container .rounded-lg {
-  border-radius: 0.75rem !important;
+  border-radius: 5px !important;
 }
 
 #trendyol-reviews-container .rounded-full {
@@ -573,335 +429,480 @@
   border-top: 1px solid #e5e7eb !important;
 }
 
-/* Photo Modal Utilities */
-#photo-modal .flex {
-  display: flex !important;
+
+/* ========================================
+   MODAL STYLES - Merged from trendyol-modal.css
+   ======================================== */
+
+#reviewModal,
+#reviewModal * {
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-#photo-modal .items-center {
-  align-items: center !important;
-}
-
-#photo-modal .justify-center {
-  justify-content: center !important;
-}
-
-#photo-modal .relative {
-  position: relative !important;
-}
-
-#photo-modal .absolute {
-  position: absolute !important;
-}
-
-#photo-modal .overflow-hidden {
+body.no-scroll {
   overflow: hidden !important;
 }
 
-#photo-modal .overflow-y-auto {
-  overflow-y: auto !important;
+.hidden {
+  display: none !important;
 }
 
-#photo-modal .object-contain {
-  object-fit: contain !important;
+/* --- MODAL OVERLAY --- */
+#reviewModal {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background-color: rgba(0, 0, 0, 0.85) !important;
+  backdrop-filter: blur(4px) !important;
+  z-index: 99999 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
-#photo-modal .bg-opacity-20 {
-  background-color: rgba(255, 255, 255, 0.2) !important;
+/* --- MODAL CONTAINER --- */
+#reviewModal .modal-container {
+  background-color: #fff !important;
+  width: 100% !important;
+  max-width: 1000px !important;
+  height: 90vh !important;
+  max-height: 90vh !important;
+  border-radius: 5px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  display: flex !important;
+  flex-direction: row !important;
+  overflow: hidden !important;
+  position: relative !important;
+  transform: scale(1) !important;
 }
 
-#photo-modal .bg-opacity-30 {
-  background-color: rgba(255, 255, 255, 0.3) !important;
+/* --- CLOSE BUTTON --- */
+#reviewModal .close-btn {
+  position: absolute !important;
+  top: 16px !important;
+  right: 16px !important;
+  z-index: 100 !important;
+  background: rgba(0, 0, 0, 0.2) !important;
+  border: none !important;
+  color: #fff !important;
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: background 0.2s !important;
 }
 
-#photo-modal .transform {
-  transform: translate(var(--tw-translate-x, 0), var(--tw-translate-y, 0)) !important;
+#reviewModal .close-btn:hover {
+  background: rgba(0, 0, 0, 0.5) !important;
 }
 
-#photo-modal .-translate-y-1\/2 {
-  transform: translateY(-50%) !important;
-}
-
-/* Mobile
- Touch & Gesture Enhancements */
+/* Mobile: Red background for close button */
 @media (max-width: 768px) {
-
-  /* Touch-friendly tap targets */
-  #photo-modal .modal-nav-btn,
-  #photo-modal #modal-close {
-    -webkit-tap-highlight-color: transparent !important;
-    touch-action: manipulation !important;
-  }
-
-  /* Smooth modal entrance animation */
-  #photo-modal>div {
-    animation: mobileModalSlideUp 0.3s ease-out !important;
-  }
-
-  @keyframes mobileModalSlideUp {
-    from {
-      transform: translateY(100%) !important;
-      opacity: 0 !important;
-    }
-
-    to {
-      transform: translateY(0) !important;
-      opacity: 1 !important;
-    }
-  }
-
-  /* Comment area slide animation */
-  .modal-comment-area {
-    animation: commentAreaSlideUp 0.4s ease-out 0.1s both !important;
-  }
-
-  @keyframes commentAreaSlideUp {
-    from {
-      transform: translateY(100%) !important;
-      opacity: 0 !important;
-    }
-
-    to {
-      transform: translateY(0) !important;
-      opacity: 1 !important;
-    }
-  }
-
-  /* Image fade-in animation */
-  #photo-modal #modal-image {
-    animation: imageFadeIn 0.5s ease-out 0.2s both !important;
-  }
-
-  @keyframes imageFadeIn {
-    from {
-      opacity: 0 !important;
-      transform: scale(0.95) !important;
-    }
-
-    to {
-      opacity: 1 !important;
-      transform: scale(1) !important;
-    }
-  }
-
-  /* Safe area adjustments for notched devices */
-  #photo-modal #modal-close {
-    top: max(1rem, env(safe-area-inset-top)) !important;
-    right: max(1rem, env(safe-area-inset-right)) !important;
-  }
-
-  .modal-comment-area {
-    padding-bottom: max(1rem, env(safe-area-inset-bottom)) !important;
-  }
-
-  /* Improved touch feedback */
-  .modal-nav-btn:active {
-    transform: translateY(-50%) scale(0.95) !important;
-    transition: transform 0.1s ease !important;
-  }
-
-  #photo-modal #modal-close:active {
-    transform: scale(0.95) !important;
-    transition: transform 0.1s ease !important;
-  }
-
-  /* Better visual hierarchy */
-  .modal-comment-area h3,
-  .modal-comment-area .font-medium {
-    font-size: 1rem !important;
-    font-weight: 600 !important;
-    color: #1f2937 !important;
-  }
-
-  /* Enhanced star rating for mobile */
-  .modal-comment-area .flex span {
-    font-size: 1.1rem !important;
-    margin-right: 2px !important;
-  }
-
-  /* Mobile-optimized spacing */
-  .modal-comment-area>div:first-child {
-    margin-bottom: 1.25rem !important;
-  }
-
-  .modal-comment-area>p {
-    margin-bottom: 1.25rem !important;
-    color: #374151 !important;
-  }
-
-  /* Subtle shadow for depth */
-  .modal-image-area {
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
-  }
-}
-
-/* Landscape mobile adjustments */
-@media (max-width: 768px) and (orientation: landscape) {
-  .modal-image-area {
-    height: 70vh !important;
-    flex: 0 0 70vh !important;
-  }
-
-  .modal-comment-area {
-    height: 30vh !important;
-    flex: 0 0 30vh !important;
-  }
-
-  #photo-modal #modal-image {
-    max-width: calc(100vw - 2rem) !important;
-    max-height: calc(70vh - 2rem) !important;
-  }
-}
-
-/* Small mobile devices */
-@media (max-width: 480px) {
-  #photo-modal #modal-close {
-    padding: 0.625rem !important;
-  }
-
-  #photo-modal #modal-close svg {
-    width: 18px !important;
-    height: 18px !important;
-  }
-
-  .modal-nav-btn {
-    width: 45px !important;
-    height: 45px !important;
-  }
-
-  .modal-nav-btn svg {
-    width: 20px !important;
-    height: 20px !important;
-  }
-
-  .modal-comment-area {
-    padding: 0.875rem !important;
-  }
-}/* Mobile 
-Landscape Mode - 50vh-50vh Split */
-@media (max-width: 768px) and (orientation: landscape) {
-  .modal-image-area {
-    height: 50vh !important;
-    flex: 0 0 50vh !important;
-  }
-
-  .modal-comment-area {
-    height: 50vh !important;
-    flex: 0 0 50vh !important;
-  }
-
-  #photo-modal #modal-image {
-    max-width: calc(100vw - 2rem) !important;
-    max-height: calc(50vh - 2rem) !important;
-  }
-}/
-* Mobile Portrait & Landscape - 70vh-30vh Split */
-@media (max-width: 768px) {
-  .modal-image-area {
-    height: 70vh !important;
-    flex: 0 0 70vh !important;
-  }
-
-  .modal-comment-area {
-    height: 30vh !important;
-    flex: 0 0 30vh !important;
-  }
-
-  #photo-modal #modal-image {
-    max-width: calc(100vw - 2rem) !important;
-    max-height: calc(70vh - 2rem) !important;
-  }
-}/* Load
-ing Animation */
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Modal Loading Improvements */
-#photo-modal #modal-loading {
-  backdrop-filter: blur(5px) !important;
-}
-
-#photo-modal #modal-image {
-  transition: opacity 0.3s ease !important;
-}
-
-/* Mobile Modal Optimizations */
-@media (max-width: 768px) {
-  #photo-modal .modal-container {
-    position: relative !important;
+  #reviewModal .close-btn {
+    background: #ef4444 !important;
   }
   
-  #photo-modal #modal-loading {
-    background-color: rgba(0,0,0,0.7) !important;
+  #reviewModal .close-btn:hover {
+    background: #dc2626 !important;
   }
-  
-  #photo-modal #modal-image {
-    max-width: calc(100vw - 1rem) !important;
-    max-height: calc(70vh - 1rem) !important;
-  }
-}/*
- Modal Image Centering */
-#photo-modal .modal-image-area {
+}
+
+/* --- LEFT: IMAGE AREA --- */
+#reviewModal .modal-image-area {
+  width: 60% !important;
+  background-color: #000 !important;
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+}
+
+#reviewModal .main-image-container {
+  width: 100% !important;
+  height: 100% !important;
+  padding: 20px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
 }
 
-#photo-modal #modal-image {
-  margin: 0 auto !important;
-  position: relative !important;
-  z-index: 10 !important;
-}
-
-/* Better image centering for all devices */
-@media (max-width: 768px) {
-  #photo-modal .modal-image-area {
-    padding: 1rem !important;
-  }
-  
-  #photo-modal #modal-image {
-    max-width: calc(100vw - 2rem) !important;
-    max-height: calc(70vh - 2rem) !important;
-  }
-}
-
-@media (min-width: 769px) {
-  #photo-modal #modal-image {
-    max-width: calc(600px - 2rem) !important;
-    max-height: calc(800px - 2rem) !important;
-  }
-}
-/
-* Perfect Modal Image Centering - Updated */
-#photo-modal .modal-image-area {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-sizing: border-box !important;
-  position: relative !important;
-}
-
-#photo-modal #modal-image {
-  margin: 0 auto !important;
-  position: relative !important;
-  z-index: 10 !important;
+#reviewModal .main-image {
   max-width: 100% !important;
   max-height: 100% !important;
   width: auto !important;
   height: auto !important;
   object-fit: contain !important;
-  object-position: center center !important;
   display: block !important;
+  user-select: none !important;
+  margin: 0 auto !important;
 }
 
-/* Perfect centering for both orientations */
-#photo-modal .modal-image-area img {
+/* Image Navigation Buttons */
+#reviewModal .nav-btn {
   position: absolute !important;
   top: 50% !important;
+  transform: translateY(-50%) !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: none !important;
+  color: #fff !important;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  backdrop-filter: blur(4px) !important;
+  transition: background 0.2s, opacity 0.2s !important;
+  opacity: 0 !important;
+  z-index: 50 !important;
+}
+
+#reviewModal .modal-image-area:hover .nav-btn {
+  opacity: 1 !important;
+}
+
+#reviewModal .nav-btn:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+}
+
+#reviewModal .nav-btn.prev {
+  left: 16px !important;
+}
+
+#reviewModal .nav-btn.next {
+  right: 16px !important;
+}
+
+/* Image Dots */
+#reviewModal .slider-dots {
+  position: absolute !important;
+  bottom: 16px !important;
   left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  max-width: calc(100% - 2rem) !important;
-  max-height: calc(100% - 2rem) !important;
+  transform: translateX(-50%) !important;
+  display: flex !important;
+  gap: 8px !important;
+  z-index: 10 !important;
+}
+
+#reviewModal .dot {
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  background-color: rgba(255, 255, 255, 0.5) !important;
+  transition: all 0.3s !important;
+  cursor: pointer !important;
+}
+
+#reviewModal .dot.active {
+  width: 24px !important;
+  background-color: #fff !important;
+  border-radius: 4px !important;
+}
+
+/* --- RIGHT: CONTENT AREA --- */
+#reviewModal .modal-content-area {
+  width: 40% !important;
+  background-color: #f9fafb !important;
+  display: flex !important;
+  flex-direction: column !important;
+  position: relative !important;
+}
+
+#reviewModal .scrollable-content {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  padding: 32px !important;
+}
+
+/* Product Header */
+#reviewModal .product-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-bottom: 24px !important;
+  padding-bottom: 16px !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  color: #4b5563 !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+}
+
+#reviewModal .product-header svg {
+  flex-shrink: 0 !important;
+}
+
+#reviewModal .product-name {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* User Info */
+#reviewModal .review-meta {
+  margin-bottom: 16px !important;
+}
+
+#reviewModal .stars {
+  display: flex !important;
+  gap: 2px !important;
+  margin-bottom: 8px !important;
+  color: #fbbf24 !important;
+}
+
+#reviewModal .user-details {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 0.875rem !important;
+  color: #6b7280 !important;
+}
+
+#reviewModal .user-name {
+  font-weight: 600 !important;
+  color: #111827 !important;
+}
+
+#reviewModal .dot-separator {
+  width: 4px !important;
+  height: 4px !important;
+  background-color: #d1d5db !important;
+  border-radius: 50% !important;
+}
+
+/* Review Text */
+#reviewModal .review-text {
+  color: #1f2937 !important;
+  font-size: 1rem !important;
+  line-height: 1.6 !important;
+  margin-bottom: 24px !important;
+}
+
+/* Seller Info */
+#reviewModal .seller-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  background-color: #fff !important;
+  border: 1px solid #e5e7eb !important;
+  padding: 8px 12px !important;
+  border-radius: 5px !important;
+  font-size: 0.75rem !important;
+  color: #6b7280 !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+  gap: 4px !important;
+}
+
+#reviewModal .seller-name {
+  font-weight: 600 !important;
+  color: #111827 !important;
+}
+
+#reviewModal .user-extra {
+  margin-top: 16px !important;
+  font-size: 0.875rem !important;
+  color: #6b7280 !important;
+  display: flex !important;
+  gap: 12px !important;
+  flex-wrap: wrap !important;
+}
+
+/* --- SCROLLBAR STYLING --- */
+#reviewModal .scrollable-content::-webkit-scrollbar {
+  width: 6px !important;
+}
+
+#reviewModal .scrollable-content::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+#reviewModal .scrollable-content::-webkit-scrollbar-thumb {
+  background-color: #d1d5db !important;
+  border-radius: 3px !important;
+}
+
+/* --- RESPONSIVE (TABLET & MOBILE) --- */
+@media (max-width: 768px) {
+  #reviewModal {
+    padding: 0 !important;
+    align-items: flex-end !important;
+  }
+
+  #reviewModal .modal-container {
+    flex-direction: column !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    border-radius: 0 !important;
+  }
+
+  #reviewModal .modal-image-area {
+    width: 100% !important;
+    height: 45vh !important;
+    flex-shrink: 0 !important;
+  }
+
+  #reviewModal .nav-btn {
+    opacity: 1 !important;
+  }
+
+  #reviewModal .modal-content-area {
+    width: 100% !important;
+    height: 55vh !important;
+    background: #fcfcfc !important;
+  }
+
+  #reviewModal .scrollable-content {
+    padding: 24px !important;
+  }
+}
+
+/* SVG Icon Visibility Fixes */
+#reviewModal .close-btn svg,
+#reviewModal .nav-btn svg {
+  display: block !important;
+  width: 24px !important;
+  height: 24px !important;
+  stroke: #fff !important;
+  stroke-width: 2 !important;
+  fill: none !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+#reviewModal .close-btn svg line,
+#reviewModal .nav-btn svg polyline {
+  stroke: #fff !important;
+  fill: none !important;
+  vector-effect: non-scaling-stroke !important;
+}
+
+/* Ensure SVG namespace is preserved */
+#reviewModal svg {
+  overflow: visible !important;
+}
+
+#reviewModal svg * {
+  stroke: inherit !important;
+  fill: inherit !important;
+}
+
+/* Sort Dropdown Tick Icon - SVG */
+#trendyol-reviews-container .sort-option {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  position: relative !important;
+}
+
+#trendyol-reviews-container .sort-option svg.tick-icon {
+  display: inline-block !important;
+  width: 14px !important;
+  height: 14px !important;
+  min-width: 14px !important;
+  max-width: 14px !important;
+  flex-shrink: 0 !important;
+  stroke: #f97316 !important;
+  fill: none !important;
+  stroke-width: 3 !important;
+}
+
+#trendyol-reviews-container .sort-option span {
+  flex: 1 !important;
+}
+
+/* Additional specificity for SVG tick icon */
+#sort-dropdown .sort-option svg.tick-icon,
+#trendyol-reviews-container button.sort-option svg.tick-icon {
+  width: 14px !important;
+  height: 14px !important;
+  min-width: 14px !important;
+  max-width: 14px !important;
+}
+
+/* Sort Button Dropdown Arrow SVG */
+#trendyol-reviews-container #sort-btn svg {
+  width: 14px !important;
+  height: 14px !important;
+  min-width: 14px !important;
+  max-width: 14px !important;
+  stroke: currentColor !important;
+  fill: none !important;
+}
+
+/* Override w-4 h-4 classes */
+#trendyol-reviews-container #sort-btn svg.w-4 {
+  width: 14px !important;
+}
+
+#trendyol-reviews-container #sort-btn svg.h-4 {
+  height: 14px !important;
+}
+
+
+/* Load More Button - Modern Style */
+#trendyol-reviews-container .load-more-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  padding: 14px 32px !important;
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%) !important;
+  color: #ffffff !important;
+  font-size: 0.9375rem !important;
+  font-weight: 600 !important;
+  border-radius: 5px !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+#trendyol-reviews-container .load-more-button::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -100% !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent) !important;
+  transition: left 0.5s ease !important;
+}
+
+#trendyol-reviews-container .load-more-button:hover::before {
+  left: 100% !important;
+}
+
+#trendyol-reviews-container .load-more-button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.35) !important;
+  background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%) !important;
+}
+
+#trendyol-reviews-container .load-more-button:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.25) !important;
+}
+
+#trendyol-reviews-container .load-more-button svg {
+  width: 16px !important;
+  height: 16px !important;
+  stroke: currentColor !important;
+  transition: transform 0.3s ease !important;
+}
+
+#trendyol-reviews-container .load-more-button:hover svg {
+  transform: translateY(2px) !important;
 }

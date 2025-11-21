@@ -10,11 +10,14 @@
   const scriptEl = document.currentScript || document.querySelector('script[src*="woocommerce-snippet"]');
   const origin = scriptEl ? new URL(scriptEl.src).origin : window.location.origin;
 
-  const CONFIG = {
+  // Allow override from window.TRENDYOL_CONFIG
+  const defaultConfig = {
     API_BASE_URL: `${origin}/api`,
     CONTAINER_ID: 'trendyol-reviews-container',
     CSS_URL: `${origin}/static/trendyol.css`
   };
+
+  const CONFIG = window.TRENDYOL_CONFIG ? { ...defaultConfig, ...window.TRENDYOL_CONFIG } : defaultConfig;
 
   // Global state
   const state = {
@@ -30,10 +33,8 @@
     modalOpen: false,
     currentPhotoIndex: 0,
     currentCommentIndex: 0,
-    imageLoading: false,
     galleryScrolling: false,
-    container: null,
-    documentListenerAdded: false
+    container: null
   };
 
   // Utility functions
@@ -211,21 +212,38 @@
           
           <div class="search-filter-container" style="display: flex; flex-direction: column; gap: 1rem;">
             <style>
-              @media (min-width: 640px) {
+              @media (min-width: 769px) {
                 .search-filter-container {
                   flex-direction: row !important;
                 }
+                .search-filter-container .search-input-wrapper {
+                  flex: 0 0 70% !important;
+                  width: 70% !important;
+                }
+                .search-filter-container .sort-button-wrapper {
+                  flex: 0 0 30% !important;
+                  width: 30% !important;
+                }
+              }
+              @media (max-width: 768px) {
+                .search-filter-container {
+                  flex-direction: column !important;
+                }
+                .search-filter-container .search-input-wrapper,
+                .search-filter-container .sort-button-wrapper {
+                  width: 100% !important;
+                }
               }
             </style>
-            <div class="flex-1 relative">
+            <div class="search-input-wrapper relative">
               <input id="search-input" class="w-full border border-gray-300 rounded-lg px-4 py-2 pl-10 text-sm" 
                      placeholder="Değerlendirmelerde Ara" value="${state.searchTerm}">
               <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
-            <div class="relative w-full sm:w-auto">
-              <button id="sort-btn" class="flex items-center justify-center gap-2 text-sm px-3 py-2 border border-orange-500 text-orange-500 rounded-lg hover:bg-orange-50 w-full sm:w-auto">
+            <div class="sort-button-wrapper relative">
+              <button id="sort-btn" class="flex items-center justify-center gap-2 text-sm px-3 py-2 border border-orange-500 text-orange-500 rounded-lg hover:bg-orange-50 w-full">
                 <span>${sortOptions.find(opt => opt.value === state.sortOption)?.label}</span>
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -236,9 +254,10 @@
                 <div id="sort-dropdown" class="absolute top-full left-0 sm:right-0 sm:left-auto mt-1 bg-white border border-gray-200 rounded-lg shadow-lg w-full sm:min-w-48" style="z-index: 9999;">
                   <div class="py-1">
                     ${sortOptions.map(option => `
-                      <button class="sort-option w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${state.sortOption === option.value ? 'text-orange-500 bg-orange-50' : 'text-gray-700'}" 
+                      <button class="sort-option w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${state.sortOption === option.value ? 'text-orange-500 bg-orange-50 active' : 'text-gray-700'}" 
                               data-value="${option.value}">
-                        ${option.label}
+                        ${state.sortOption === option.value ? '<svg class="tick-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>' : ''}
+                        <span>${option.label}</span>
                       </button>
                     `).join('')}
                   </div>
@@ -324,11 +343,12 @@
           </p>
           
           ${comment.photos && comment.photos.length > 0 ? `
-            <div class="flex gap-2 mb-4">
+            <div class="flex gap-2 mb-4 flex-wrap">
               ${comment.photos.slice(0, 6).map(photo => `
-                <div class="w-16 h-16 bg-black rounded border hover:shadow-md transition-shadow cursor-pointer overflow-hidden comment-photo" 
+                <div class="bg-black border hover:shadow-md transition-shadow cursor-pointer overflow-hidden comment-photo" 
+                     style="width: 150px; height: 150px; flex-shrink: 0; border-radius: 5px;"
                      data-photo="${photo}">
-                  <img src="${utils.getOptimizedImageUrl(photo, 150)}" alt="" class="w-full h-full object-cover">
+                  <img src="${utils.getOptimizedImageUrl(photo, 300)}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
               `).join('')}
             </div>
@@ -359,8 +379,11 @@
               <span class="text-gray-600">Yükleniyor...</span>
             </div>
           ` : `
-            <button id="load-more-btn" class="px-6 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-sm font-medium">
-              Daha Fazla Yorum Yükle
+            <button id="load-more-btn" class="load-more-button">
+              <span>Daha Fazla Yorum Yükle</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
             </button>
           `}
         </div>
@@ -371,88 +394,116 @@
       if (!state.modalOpen) return;
 
       const comment = state.comments[state.currentCommentIndex];
-      if (!comment || !comment.photos) return;
+      if (!comment || !comment.photos || comment.photos.length === 0) return;
 
-      const photo = comment.photos[state.currentPhotoIndex];
-      const isMobile = window.innerWidth <= 768;
+      const photos = comment.photos;
+      if (!photos[state.currentPhotoIndex]) {
+        state.currentPhotoIndex = 0;
+      }
+      const currentPhoto = photos[state.currentPhotoIndex];
+      const productName = state.data?.product?.name || 'Madetoll Cica Cream (Onarıcı Bakım Kremi)';
+      const sellerName = comment.seller || state.data?.product?.seller || 'Madetoll by TazeKrem';
+
+      const navButtons = `
+        <button id="prevBtn" class="nav-btn prev" data-direction="prev">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+        <button id="nextBtn" class="nav-btn next" data-direction="next">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      `;
+
+      const dotsMarkup = photos.length > 1 ? `
+        <div id="sliderDots" class="slider-dots">
+          ${photos.map((_, idx) => `
+            <div class="dot ${idx === state.currentPhotoIndex ? 'active' : ''}" data-index="${idx}"></div>
+          `).join('')}
+        </div>
+      ` : '';
+
+      const hasUser = Boolean(comment.user);
+      const hasDate = Boolean(comment.date);
+      const showMetaDot = hasUser && hasDate;
+      const reviewDate = comment.date || '';
+      const userName = comment.user || '';
+      const reviewText = comment.comment || '';
+
+      const userInfoBlock = comment.user_info ? `
+        <div class="user-extra">
+          <span>Boy: ${comment.user_info.height || '-'}</span>
+          <span>Kilo: ${comment.user_info.weight || '-'}</span>
+        </div>
+      ` : '';
 
       const modalHTML = `
-        <div id="photo-modal" class="fixed inset-0 bg-black ${isMobile ? 'bg-opacity-95' : 'bg-opacity-75'} flex items-center justify-center z-50" style="z-index: 999999;">
-          <div class="modal-container" style="display: flex; background: ${isMobile ? '#000' : 'white'}; border-radius: ${isMobile ? '0' : '8px'}; overflow: hidden; width: ${isMobile ? '100vw' : '1000px'}; height: ${isMobile ? '100vh' : '800px'}; max-width: ${isMobile ? '100vw' : '90vw'}; max-height: ${isMobile ? '100vh' : '90vh'}; flex-direction: ${isMobile ? 'column' : 'row'};">
-            
-            <button id="modal-close" class="absolute ${isMobile ? 'top-4 right-4' : 'top-4 right-4'} z-10" style="z-index: 1000; background: ${isMobile ? 'rgba(0,0,0,0.8)' : 'transparent'}; border-radius: ${isMobile ? '50%' : '0'}; padding: ${isMobile ? '0.75rem' : '0.5rem'}; ${isMobile ? 'backdrop-filter: blur(10px); border: 2px solid rgba(255,255,255,0.2);' : ''}">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M18 6L6 18M6 6L18 18" stroke="${isMobile ? 'white' : 'currentColor'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <div id="reviewModal" class="modal-overlay active">
+          <div class="modal-container">
+            <button id="closeBtn" class="close-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
             </button>
-            
-            <div class="modal-image-area relative bg-black flex items-center justify-center" style="width: ${isMobile ? '100%' : '600px'}; height: ${isMobile ? '70vh' : '800px'}; ${isMobile ? 'flex: 0 0 70vh;' : 'min-width: 600px; flex-shrink: 0;'} display: flex; align-items: center; justify-content: center; padding: ${isMobile ? '1rem' : '2rem'}; box-sizing: border-box;">
-              ${!isMobile ? `
-                <button class="modal-nav-btn absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full p-3 z-10" data-direction="prev">
-                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-                
-                <button class="modal-nav-btn absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full p-3 z-10" data-direction="next">
-                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              ` : ''}
-              
-              <img id="modal-image" src="${photo}" alt="" style="max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; display: block; margin: 0 auto; position: relative; z-index: 5;">
+
+            <div class="modal-image-area">
+              <div class="main-image-container">
+                <div id="imageLoader" class="image-loader">
+                  <div class="spinner"></div>
+                  <p>Görsel Yükleniyor...</p>
+                </div>
+                <img id="mainImage" src="${currentPhoto}" alt="${productName} görseli" class="main-image" style="display: none;">
+              </div>
+              ${navButtons}
+              ${dotsMarkup}
             </div>
-            
-            <div id="modal-comment-area" class="modal-comment-area overflow-y-auto" style="width: ${isMobile ? '100%' : '400px'}; ${isMobile ? 'height: 30vh; flex: 0 0 30vh;' : 'padding: 2rem; flex-shrink: 0;'} background: ${isMobile ? '#fff' : '#f8f8f8'}; ${isMobile ? 'border-radius: 20px 20px 0 0; padding: 1rem; position: relative; box-shadow: 0 -4px 20px rgba(0,0,0,0.1);' : ''}">${isMobile ? '<div style="position: absolute; top: 0.5rem; left: 50%; transform: translateX(-50%); width: 40px; height: 4px; background: #e5e7eb; border-radius: 2px;"></div>' : ''}
-              <div class="mb-4">
-                <div class="flex mb-2">
-                  ${utils.createStarRating(comment.rating)}
+
+            <div class="modal-content-area">
+              <div class="scrollable-content">
+                <div class="product-header">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
+                    <path d="M3 6h18"></path>
+                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                  </svg>
+                  <span class="product-name">${productName}</span>
                 </div>
-                <div class="text-sm text-gray-600">
-                  <span class="font-medium">${comment.user || ''}</span>
-                  <span class="mx-2">•</span>
-                  <span>${comment.date || ''}</span>
+
+                <div class="review-meta">
+                  <div class="stars">
+                    ${utils.createStarRating(comment.rating)}
+                  </div>
+                  <div class="user-details">
+                    <span class="user-name">${userName}</span>
+                    ${showMetaDot ? '<span class="dot-separator"></span>' : ''}
+                    <span>${reviewDate}</span>
+                  </div>
                 </div>
+
+                <p class="review-text">
+                  ${reviewText}
+                </p>
+
+                <div class="seller-badge">
+                  <span class="seller-name">${sellerName}</span> satıcısından alındı
+                </div>
+
+                ${userInfoBlock}
               </div>
-              
-              <p class="text-gray-800 mb-4 leading-relaxed">
-                ${comment.comment || ''}
-              </p>
-              
-              <div class="text-sm mb-3" style="color: #666;">
-                <span class="font-medium">Madetoll by TazeKrem</span> satıcısından alındı
-              </div>
-              
-              ${comment.user_info ? `
-                <div class="text-sm text-gray-500 mb-4">
-                  <span>Boy: ${comment.user_info.height || ''}</span>
-                  <span class="mx-3">Kilo: ${comment.user_info.weight || ''}</span>
-                </div>
-              ` : ''}
-              
-              ${comment.photos && comment.photos.length > 1 ? `
-                <div class="text-sm text-gray-500">
-                  ${state.currentPhotoIndex + 1} / ${comment.photos.length}
-                </div>
-              ` : ''}
             </div>
           </div>
         </div>
       `;
 
-      // Remove existing modal
-      const existing = document.getElementById('photo-modal');
+      const existing = document.getElementById('reviewModal');
       if (existing) existing.remove();
 
-      // Add new modal
       document.body.insertAdjacentHTML('beforeend', modalHTML);
-      document.body.style.overflow = 'hidden';
+      document.body.classList.add('no-scroll');
 
-      // No loading system - images show immediately
-      console.log('Modal opened - image should be visible immediately');
-
-      // Attach modal listeners
       eventManager.attachModalListeners();
     }
   };
@@ -537,8 +588,13 @@
       // Photo click (gallery or comment photos)
       if (target.classList.contains('gallery-photo-item') || target.classList.contains('comment-photo')) {
         const photoUrl = target.dataset.photo;
-        console.log('Gallery photo clicked:', photoUrl);
-        if (photoUrl) this.openModal(photoUrl);
+        console.log('🖼️ Gallery photo clicked:', photoUrl);
+        console.log('📊 Current state:', { comments: state.comments.length, modalOpen: state.modalOpen });
+        if (photoUrl) {
+          this.openModal(photoUrl);
+        } else {
+          console.error('❌ No photo URL found!');
+        }
         return;
       }
 
@@ -551,98 +607,55 @@
     },
 
     attachModalListeners() {
-      const modal = document.getElementById('photo-modal');
+      const modal = document.getElementById('reviewModal');
       if (!modal) return;
 
-      const isMobile = window.innerWidth <= 768;
+      const closeBtn = modal.querySelector('#closeBtn');
+      const prevBtn = modal.querySelector('#prevBtn');
+      const nextBtn = modal.querySelector('#nextBtn');
+      const dots = modal.querySelectorAll('#sliderDots .dot');
 
-      modal.addEventListener('click', (e) => {
-        const target = e.target;
-
-        // Close button
-        if (target.closest('#modal-close')) {
-          e.preventDefault();
-          this.closeModal();
-          return;
-        }
-
-        // Navigation (only for desktop)
-        const navBtn = target.closest('.modal-nav-btn');
-        if (navBtn && !isMobile) {
-          e.preventDefault();
-          this.navigatePhoto(navBtn.dataset.direction);
-          return;
-        }
-
-        // Backdrop
-        if (target.id === 'photo-modal') {
-          e.preventDefault();
-          this.closeModal();
-          return;
-        }
+      closeBtn?.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.closeModal();
       });
 
-      // Mobile swipe support
-      if (isMobile) {
-        let startX = 0;
-        let startY = 0;
-        let isScrolling = false;
+      const handleNav = (direction) => (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        this.navigatePhoto(direction);
+      };
 
-        const imageArea = modal.querySelector('.modal-image-area');
-        if (imageArea) {
-          imageArea.addEventListener('touchstart', (e) => {
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-            isScrolling = false;
-          }, { passive: true });
+      prevBtn?.addEventListener('click', handleNav('prev'));
+      nextBtn?.addEventListener('click', handleNav('next'));
 
-          imageArea.addEventListener('touchmove', (e) => {
-            if (!startX || !startY) return;
-
-            const currentX = e.touches[0].clientX;
-            const currentY = e.touches[0].clientY;
-            const diffX = Math.abs(currentX - startX);
-            const diffY = Math.abs(currentY - startY);
-
-            if (diffY > diffX) {
-              isScrolling = true;
-            }
-          }, { passive: true });
-
-          imageArea.addEventListener('touchend', (e) => {
-            if (!startX || isScrolling) return;
-
-            const endX = e.changedTouches[0].clientX;
-            const diffX = startX - endX;
-
-            // Minimum swipe distance
-            if (Math.abs(diffX) > 50) {
-              if (diffX > 0) {
-                // Swipe left - next image
-                this.navigatePhoto('next');
-              } else {
-                // Swipe right - previous image
-                this.navigatePhoto('prev');
-              }
-            }
-
-            startX = 0;
-            startY = 0;
-            isScrolling = false;
-          }, { passive: true });
+      const keyHandler = (e) => {
+        if (!state.modalOpen) return;
+        if (e.key === 'ArrowRight') {
+          this.navigatePhoto('next');
+        } else if (e.key === 'ArrowLeft') {
+          this.navigatePhoto('prev');
+        } else if (e.key === 'Escape') {
+          this.closeModal();
         }
+      };
+      window.addEventListener('keydown', keyHandler, { passive: true });
 
-        // Mobile double tap to close
-        let lastTap = 0;
-        imageArea?.addEventListener('touchend', (e) => {
-          const currentTime = new Date().getTime();
-          const tapLength = currentTime - lastTap;
-          if (tapLength < 500 && tapLength > 0) {
-            this.closeModal();
-          }
-          lastTap = currentTime;
+      dots.forEach((dot) => {
+        dot.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const index = parseInt(dot.dataset.index || '0', 10);
+          state.currentPhotoIndex = Number.isNaN(index) ? 0 : index;
+          this.updateModalImage();
         });
-      }
+      });
+
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          this.closeModal();
+        }
+      });
     },
 
     updateComments() {
@@ -668,15 +681,20 @@
     },
 
     openModal(photoUrl) {
+      console.log('🚀 openModal called with:', photoUrl);
+      console.log('📝 Available comments:', state.comments.length);
+      
       // First try to find in currently displayed comments
       for (let i = 0; i < state.comments.length; i++) {
         const comment = state.comments[i];
         if (comment.photos) {
           for (let j = 0; j < comment.photos.length; j++) {
             if (comment.photos[j] === photoUrl) {
+              console.log('✅ Photo found in displayed comments!', { commentIndex: i, photoIndex: j });
               state.currentCommentIndex = i;
               state.currentPhotoIndex = j;
               state.modalOpen = true;
+              document.body.classList.add('no-scroll');
               renderer.renderModal();
               return;
             }
@@ -685,12 +703,14 @@
       }
 
       // If not found, search in ALL comments and load that comment
+      console.log('🔍 Searching in all comments...');
       const allComments = state.data?.comments || [];
       for (let i = 0; i < allComments.length; i++) {
         const comment = allComments[i];
         if (comment.photos) {
           for (let j = 0; j < comment.photos.length; j++) {
             if (comment.photos[j] === photoUrl) {
+              console.log('✅ Photo found in all comments!', { commentIndex: i, photoIndex: j });
               // Add this comment to displayed comments if not already there
               if (!state.comments.find(c => c === comment)) {
                 state.comments.unshift(comment);
@@ -698,132 +718,98 @@
               state.currentCommentIndex = state.comments.findIndex(c => c === comment);
               state.currentPhotoIndex = j;
               state.modalOpen = true;
+              document.body.classList.add('no-scroll');
               renderer.renderModal();
               return;
             }
           }
         }
       }
+      
+      console.error('❌ Photo not found in any comments!', photoUrl);
     },
 
     closeModal() {
       state.modalOpen = false;
-      const modal = document.getElementById('photo-modal');
+      const modal = document.getElementById('reviewModal');
       if (modal) modal.remove();
-      document.body.style.overflow = '';
+      document.body.classList.remove('no-scroll');
     },
 
     navigatePhoto(direction) {
       const comment = state.comments[state.currentCommentIndex];
       if (!comment?.photos) return;
 
-      // No loading - just update image directly
-      const modalImage = document.getElementById('modal-image');
-      if (modalImage) {
-        console.log('Navigating to new photo - no loading screen');
-      }
-
       if (direction === 'next') {
         if (state.currentPhotoIndex < comment.photos.length - 1) {
           state.currentPhotoIndex++;
         } else {
-          // Next comment with photos
+          let nextCommentIndex = state.currentCommentIndex + 1;
           let foundNext = false;
-          for (let i = state.currentCommentIndex + 1; i < state.comments.length; i++) {
-            if (state.comments[i].photos?.length > 0) {
-              state.currentCommentIndex = i;
+          
+          while (nextCommentIndex < state.comments.length) {
+            const c = state.comments[nextCommentIndex];
+            if (c?.photos && c.photos.length > 0) {
+              state.currentCommentIndex = nextCommentIndex;
               state.currentPhotoIndex = 0;
               foundNext = true;
               break;
             }
+            nextCommentIndex++;
           }
-
-          // If no next comment found and we have more data, load more comments
-          if (!foundNext && state.hasMore && !state.loading) {
-            console.log('Loading more comments for navigation');
+          
+          // If we reached the end and there are more comments to load
+          if (!foundNext && state.hasMore && nextCommentIndex >= state.comments.length) {
+            console.log('🔄 Loading more comments from modal navigation...');
             state.page++;
-            eventManager.updateComments().then(() => {
-              // Try to find next comment with photos again
-              for (let i = state.currentCommentIndex + 1; i < state.comments.length; i++) {
-                if (state.comments[i].photos?.length > 0) {
-                  state.currentCommentIndex = i;
+            this.updateComments().then(() => {
+              // After loading, try to navigate to the next photo
+              const newNextIndex = state.currentCommentIndex + 1;
+              if (newNextIndex < state.comments.length) {
+                const c = state.comments[newNextIndex];
+                if (c?.photos && c.photos.length > 0) {
+                  state.currentCommentIndex = newNextIndex;
                   state.currentPhotoIndex = 0;
-                  // Re-trigger navigation after loading
-                  eventManager.navigatePhoto('next');
-                  return;
+                  renderer.renderModal();
                 }
               }
             });
-            return; // Exit early while loading
+            return; // Exit early, will re-render after loading
           }
         }
       } else {
         if (state.currentPhotoIndex > 0) {
           state.currentPhotoIndex--;
         } else {
-          // Previous comment with photos
-          for (let i = state.currentCommentIndex - 1; i >= 0; i--) {
-            if (state.comments[i].photos?.length > 0) {
-              state.currentCommentIndex = i;
-              state.currentPhotoIndex = state.comments[i].photos.length - 1;
+          let prevCommentIndex = state.currentCommentIndex - 1;
+          while (prevCommentIndex >= 0) {
+            const c = state.comments[prevCommentIndex];
+            if (c?.photos && c.photos.length > 0) {
+              state.currentCommentIndex = prevCommentIndex;
+              state.currentPhotoIndex = c.photos.length - 1;
               break;
             }
+            prevCommentIndex--;
           }
         }
       }
 
-      // Update image
-      const newComment = state.comments[state.currentCommentIndex];
-      const newPhoto = newComment.photos[state.currentPhotoIndex];
+      renderer.renderModal();
+    },
 
-      if (modalImage) {
-        console.log('Navigating to new photo');
+    updateModalImage() {
+      const comment = state.comments[state.currentCommentIndex];
+      if (!comment?.photos) return;
 
-        // Direct image update - no loading
-        modalImage.src = newPhoto;
-        modalImage.style.display = 'block';
-        modalImage.style.opacity = '1';
-        console.log('Navigation image updated directly');
+      const mainImage = document.getElementById('mainImage');
+      if (mainImage) {
+        mainImage.src = comment.photos[state.currentPhotoIndex];
       }
 
-      // Update comment info
-      const commentInfo = document.getElementById('modal-comment-area');
-      if (commentInfo) {
-        console.log('Updating comment info for:', newComment.user);
-        commentInfo.innerHTML = `
-          <div class="mb-4">
-            <div class="flex mb-2">
-              ${utils.createStarRating(newComment.rating)}
-            </div>
-            <div class="text-sm text-gray-600">
-              <span class="font-medium">${newComment.user || ''}</span>
-              <span class="mx-2">•</span>
-              <span>${newComment.date || ''}</span>
-            </div>
-          </div>
-          
-          <p class="text-gray-800 mb-4 leading-relaxed">
-            ${newComment.comment || ''}
-          </p>
-          
-          <div class="text-sm mb-3" style="color: #666;">
-            <span class="font-medium">Madetoll by TazeKrem</span> satıcısından alındı
-          </div>
-          
-          ${newComment.user_info ? `
-            <div class="text-sm text-gray-500 mb-4">
-              <span>Boy: ${newComment.user_info.height || ''}</span>
-              <span class="mx-3">Kilo: ${newComment.user_info.weight || ''}</span>
-            </div>
-          ` : ''}
-          
-          ${newComment.photos && newComment.photos.length > 1 ? `
-            <div class="text-sm text-gray-500">
-              ${state.currentPhotoIndex + 1} / ${newComment.photos.length}
-            </div>
-          ` : ''}
-        `;
-      }
+      const dots = document.querySelectorAll('#sliderDots .dot');
+      dots.forEach((dot, idx) => {
+        dot.classList.toggle('active', idx === state.currentPhotoIndex);
+      });
     }
   };
 
