@@ -187,26 +187,20 @@
     renderHeader(sortOptions) {
       return `
         <div class="p-6 border-b">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-medium text-gray-900">Tüm Değerlendirmeler</h2>
-            <div class="flex items-center">
-              <img id="trendyol-logo" src="https://dukkan.madetoll.com.tr/wp-content/uploads/2025/11/trendyollogo.png" alt="Trendyol" style="width: 200px; height: auto;">
-            </div>
-          </div>
-          
-          <div class="flex items-center gap-6 mb-6">
-            <div class="flex items-center gap-2">
-              <span class="text-2xl font-bold text-gray-900">
-                ${state.data?.product?.average_score ?? '4.6'}
-              </span>
-              <div class="flex">
-                ${utils.createStarRating(Math.floor(state.data?.product?.average_score || 4.6))}
+          <div class="reviews-header">
+            <div class="reviews-header-left">
+              <div class="rating-row">
+                <span class="rating-value rating-emphasis">${state.data?.product?.average_score ?? '4.6'}</span>
+                <div class="rating-stars rating-stars-emphasis">${utils.createStarRating(Math.floor(state.data?.product?.average_score || 4.6))}</div>
+              </div>
+              <div class="meta-row">
+                <span class="font-medium">${state.comments.length}</span> Değerlendirme
+                <span class="mx-2">•</span>
+                <span class="font-medium">${state.data?.product?.total_comment_count ?? '0'}</span> Yorum
               </div>
             </div>
-            <div class="text-sm text-gray-600">
-              <span class="font-medium">${state.comments.length}</span> Değerlendirme
-              <span class="mx-2">•</span>
-              <span class="font-medium">${state.data?.product?.total_comment_count ?? '0'}</span> Yorum
+            <div class="reviews-header-right">
+              <img id="trendyol-logo" src="https://dukkan.madetoll.com.tr/wp-content/uploads/2025/11/trendyollogo.svg" alt="Trendyol" style="width: 200px; height: auto;">
             </div>
           </div>
           
@@ -280,7 +274,7 @@
       return `
         <div class="p-6 border-b">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="font-medium text-gray-900">Fotoğraflı Değerlendirmeler (${state.data?.product?.total_comment_count || state.data?.comments?.length || 0})</h3>
+            <h3 class="photo-reviews-title font-medium text-gray-900">Fotoğraflı Değerlendirmeler (${state.data?.product?.total_comment_count || state.data?.comments?.length || 0})</h3>
             <div class="flex gap-1">
               <button class="gallery-nav-btn" data-direction="prev">
                 <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -455,7 +449,7 @@
                   <div class="spinner"></div>
                   <p>Görsel Yükleniyor...</p>
                 </div>
-                <img id="mainImage" src="${currentPhoto}" alt="${productName} görseli" class="main-image" style="display: none;">
+                <img id="mainImage" src="" alt="${productName} görseli" class="main-image hidden">
               </div>
               ${navButtons}
               ${dotsMarkup}
@@ -505,6 +499,9 @@
       document.body.classList.add('no-scroll');
 
       eventManager.attachModalListeners();
+      
+      // Load the first image
+      eventManager.updateModalImage();
     }
   };
 
@@ -802,8 +799,39 @@
       if (!comment?.photos) return;
 
       const mainImage = document.getElementById('mainImage');
-      if (mainImage) {
-        mainImage.src = comment.photos[state.currentPhotoIndex];
+      const imageLoader = document.getElementById('imageLoader');
+      
+      if (mainImage && imageLoader) {
+        const newPhotoUrl = comment.photos[state.currentPhotoIndex];
+        
+        // If it's the same image, just show it
+        if (mainImage.src === newPhotoUrl) {
+          imageLoader.style.setProperty('display', 'none', 'important');
+          mainImage.style.setProperty('display', 'block', 'important');
+          return;
+        }
+        
+        // Show loader and hide image
+        imageLoader.style.setProperty('display', 'flex', 'important');
+        mainImage.style.setProperty('display', 'none', 'important');
+        
+        // Create a new image to preload
+        const tempImage = new Image();
+        
+        tempImage.onload = () => {
+          mainImage.src = newPhotoUrl;
+          imageLoader.style.setProperty('display', 'none', 'important');
+          mainImage.style.setProperty('display', 'block', 'important');
+        };
+        
+        tempImage.onerror = () => {
+          imageLoader.style.setProperty('display', 'flex', 'important');
+          imageLoader.innerHTML = '<p style="color: #ef4444;">Görsel yüklenemedi</p>';
+          mainImage.style.setProperty('display', 'none', 'important');
+        };
+        
+        // Start loading
+        tempImage.src = newPhotoUrl;
       }
 
       const dots = document.querySelectorAll('#sliderDots .dot');

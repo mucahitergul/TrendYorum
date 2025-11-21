@@ -906,3 +906,105 @@ body.no-scroll {
 #trendyol-reviews-container .load-more-button:hover svg {
   transform: translateY(2px) !important;
 }
+
+
+/* Image Loader in Modal */
+#reviewModal .image-loader {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 16px !important;
+  z-index: 10 !important;
+}
+
+#reviewModal .image-loader p {
+  color: #ffffff !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  margin: 0 !important;
+}
+
+#reviewModal .spinner {
+  width: 48px !important;
+  height: 48px !important;
+  border: 4px solid rgba(255, 255, 255, 0.2) !important;
+  border-top-color: #f97316 !important;
+  border-radius: 50% !important;
+  animation: spin 0.8s linear infinite !important;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+#trendyol-reviews-container .photo-reviews-title {
+  font-size: 16px!important;
+}
+
+#trendyol-reviews-container .rating-emphasis {
+  font-size: 2em !important;
+  line-height: 1 !important;
+}
+
+#trendyol-reviews-container .rating-stars-emphasis span {
+  font-size: 2em !important;
+  line-height: 1 !important;
+}
+
+#trendyol-reviews-container #search-input {
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+  min-height: 48px !important;
+}
+
+#trendyol-reviews-container #sort-btn {
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+  min-height: 48px !important;
+}
+#trendyol-reviews-container .reviews-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center;
+  margin-bottom: 1rem !important;
+}
+
+#trendyol-reviews-container .reviews-header-left {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+}
+
+#trendyol-reviews-container .rating-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+#trendyol-reviews-container .rating-value {
+  font-size: 2em !important;
+  line-height: 1 !important;
+  font-weight: 700 !important;
+  color: #111827 !important;
+}
+
+#trendyol-reviews-container .rating-stars span {
+  font-size: 2em !important;
+  line-height: 1 !important;
+}
+
+#trendyol-reviews-container .meta-row {
+  font-size: 0.875rem !important;
+  color: #4b5563 !important;
+}
+
+#trendyol-reviews-container .reviews-header-right {
+  display: flex !important;
+  align-items: center !important;
+}
