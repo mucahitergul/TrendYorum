@@ -374,65 +374,37 @@
       if (!comment || !comment.photos) return;
 
       const photo = comment.photos[state.currentPhotoIndex];
+      const isMobile = window.innerWidth <= 768;
 
       const modalHTML = `
-        <div id="photo-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50" style="z-index: 999999;">
-          <div class="modal-container" style="display: flex; background: white; border-radius: 8px; overflow: hidden; width: 1000px; height: 800px; max-width: 90vw; max-height: 90vh;">
-            <style>
-              @media (max-width: 768px) {
-                #photo-modal {
-                  padding: 0 !important;
-                }
-                .modal-container {
-                  flex-direction: column !important;
-                  width: 100vw !important;
-                  height: 100vh !important;
-                  max-width: 100vw !important;
-                  max-height: 100vh !important;
-                  border-radius: 0 !important;
-                }
-                .modal-image-area {
-                  width: 100% !important;
-                  height: 400px !important;
-                  min-width: auto !important;
-                  flex-shrink: 0 !important;
-                }
-                .modal-comment-area {
-                  width: 100% !important;
-                  flex: 1 !important;
-                  padding: 1rem !important;
-                  background: white !important;
-                }
-              }
-            </style>
-            <button id="modal-close" class="absolute top-4 right-4 z-10" style="z-index: 100;">
+        <div id="photo-modal" class="fixed inset-0 bg-black ${isMobile ? 'bg-opacity-95' : 'bg-opacity-75'} flex items-center justify-center z-50" style="z-index: 999999;">
+          <div class="modal-container" style="display: flex; background: ${isMobile ? '#000' : 'white'}; border-radius: ${isMobile ? '0' : '8px'}; overflow: hidden; width: ${isMobile ? '100vw' : '1000px'}; height: ${isMobile ? '100vh' : '800px'}; max-width: ${isMobile ? '100vw' : '90vw'}; max-height: ${isMobile ? '100vh' : '90vh'}; flex-direction: ${isMobile ? 'column' : 'row'};">
+            
+            <button id="modal-close" class="absolute ${isMobile ? 'top-4 right-4' : 'top-4 right-4'} z-10" style="z-index: 1000; background: ${isMobile ? 'rgba(0,0,0,0.8)' : 'transparent'}; border-radius: ${isMobile ? '50%' : '0'}; padding: ${isMobile ? '0.75rem' : '0.5rem'}; ${isMobile ? 'backdrop-filter: blur(10px); border: 2px solid rgba(255,255,255,0.2);' : ''}">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M18 6L6 18M6 6L18 18" stroke="${isMobile ? 'white' : 'currentColor'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </button>
             
-            <div class="modal-image-area relative bg-black flex items-center justify-center">
-              <button class="modal-nav-btn absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full p-3 z-10" data-direction="prev">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
+            <div class="modal-image-area relative bg-black flex items-center justify-center" style="width: ${isMobile ? '100%' : '600px'}; height: ${isMobile ? '70vh' : '800px'}; ${isMobile ? 'flex: 0 0 70vh;' : 'min-width: 600px; flex-shrink: 0;'} display: flex; align-items: center; justify-content: center; padding: ${isMobile ? '1rem' : '2rem'}; box-sizing: border-box;">
+              ${!isMobile ? `
+                <button class="modal-nav-btn absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full p-3 z-10" data-direction="prev">
+                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                
+                <button class="modal-nav-btn absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full p-3 z-10" data-direction="next">
+                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              ` : ''}
               
-              <button class="modal-nav-btn absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full p-3 z-10" data-direction="next">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-              
-              <img id="modal-image" src="${photo}" alt="" style="max-width: 100%; max-height: 100%; object-fit: contain; display: none;">
-              
-              <div id="modal-loading" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: rgba(0,0,0,0.5); z-index: 20;">
-                <div style="width: 48px; height: 48px; border: 4px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-                <span style="color: white; margin-top: 1rem; font-size: 14px;">Görsel yükleniyor...</span>
-              </div>
+              <img id="modal-image" src="${photo}" alt="" style="max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; display: block; margin: 0 auto; position: relative; z-index: 5;">
             </div>
             
-            <div id="modal-comment-area" class="modal-comment-area bg-white overflow-y-auto">
+            <div id="modal-comment-area" class="modal-comment-area overflow-y-auto" style="width: ${isMobile ? '100%' : '400px'}; ${isMobile ? 'height: 30vh; flex: 0 0 30vh;' : 'padding: 2rem; flex-shrink: 0;'} background: ${isMobile ? '#fff' : '#f8f8f8'}; ${isMobile ? 'border-radius: 20px 20px 0 0; padding: 1rem; position: relative; box-shadow: 0 -4px 20px rgba(0,0,0,0.1);' : ''}">${isMobile ? '<div style="position: absolute; top: 0.5rem; left: 50%; transform: translateX(-50%); width: 40px; height: 4px; background: #e5e7eb; border-radius: 2px;"></div>' : ''}
               <div class="mb-4">
                 <div class="flex mb-2">
                   ${utils.createStarRating(comment.rating)}
@@ -477,89 +449,8 @@
       document.body.insertAdjacentHTML('beforeend', modalHTML);
       document.body.style.overflow = 'hidden';
 
-      // Simple loading system - Wait for DOM
-      setTimeout(function () {
-        const img = document.getElementById('modal-image');
-        const loading = document.getElementById('modal-loading');
-
-        if (img && loading) {
-          console.log('Loading system initialized');
-
-          // Use decode() method for better browser processing control
-          const showImageWhenReady = async () => {
-            try {
-              console.log('Starting image decode process...');
-
-              // Wait for browser to decode and process the image
-              await img.decode();
-
-              console.log('Image decoded successfully');
-
-              // Additional check with requestAnimationFrame for rendering
-              requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                  console.log('Image fully processed and ready to display');
-                  if (loading && loading.parentNode) {
-                    loading.parentNode.removeChild(loading);
-                  }
-                  img.style.display = 'block';
-                });
-              });
-
-            } catch (error) {
-              console.log('Decode failed, falling back to standard method:', error);
-
-              // Fallback to standard method if decode fails
-              const waitForImageProcessing = () => {
-                if (img.naturalWidth > 0 && img.naturalHeight > 0) {
-                  requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                      console.log('Image processed via fallback method');
-                      if (loading && loading.parentNode) {
-                        loading.parentNode.removeChild(loading);
-                      }
-                      img.style.display = 'block';
-                    });
-                  });
-                } else {
-                  setTimeout(waitForImageProcessing, 50);
-                }
-              };
-              waitForImageProcessing();
-            }
-          };
-
-          img.onload = showImageWhenReady;
-
-          img.onerror = function () {
-            console.log('Image error');
-            loading.innerHTML = '<span style="color: white;">Görsel yüklenemedi</span>';
-          };
-
-          // Check if already loaded
-          if (img.complete) {
-            console.log('Image already loaded');
-            if (loading && loading.parentNode) {
-              loading.parentNode.removeChild(loading);
-            }
-            img.style.display = 'block';
-          }
-
-          // Force show after 5 seconds (only if image still not loaded)
-          setTimeout(function () {
-            if (img && img.style.display === 'none') {
-              console.log('Force showing image after timeout');
-              const loadingEl = document.getElementById('modal-loading');
-              if (loadingEl && loadingEl.parentNode) {
-                loadingEl.parentNode.removeChild(loadingEl);
-              }
-              img.style.display = 'block';
-            }
-          }, 5000);
-        } else {
-          console.error('Image or loading not found');
-        }
-      }, 100);
+      // No loading system - images show immediately
+      console.log('Modal opened - image should be visible immediately');
 
       // Attach modal listeners
       eventManager.attachModalListeners();
@@ -663,6 +554,8 @@
       const modal = document.getElementById('photo-modal');
       if (!modal) return;
 
+      const isMobile = window.innerWidth <= 768;
+
       modal.addEventListener('click', (e) => {
         const target = e.target;
 
@@ -673,9 +566,9 @@
           return;
         }
 
-        // Navigation
+        // Navigation (only for desktop)
         const navBtn = target.closest('.modal-nav-btn');
-        if (navBtn) {
+        if (navBtn && !isMobile) {
           e.preventDefault();
           this.navigatePhoto(navBtn.dataset.direction);
           return;
@@ -688,6 +581,68 @@
           return;
         }
       });
+
+      // Mobile swipe support
+      if (isMobile) {
+        let startX = 0;
+        let startY = 0;
+        let isScrolling = false;
+
+        const imageArea = modal.querySelector('.modal-image-area');
+        if (imageArea) {
+          imageArea.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            isScrolling = false;
+          }, { passive: true });
+
+          imageArea.addEventListener('touchmove', (e) => {
+            if (!startX || !startY) return;
+
+            const currentX = e.touches[0].clientX;
+            const currentY = e.touches[0].clientY;
+            const diffX = Math.abs(currentX - startX);
+            const diffY = Math.abs(currentY - startY);
+
+            if (diffY > diffX) {
+              isScrolling = true;
+            }
+          }, { passive: true });
+
+          imageArea.addEventListener('touchend', (e) => {
+            if (!startX || isScrolling) return;
+
+            const endX = e.changedTouches[0].clientX;
+            const diffX = startX - endX;
+
+            // Minimum swipe distance
+            if (Math.abs(diffX) > 50) {
+              if (diffX > 0) {
+                // Swipe left - next image
+                this.navigatePhoto('next');
+              } else {
+                // Swipe right - previous image
+                this.navigatePhoto('prev');
+              }
+            }
+
+            startX = 0;
+            startY = 0;
+            isScrolling = false;
+          }, { passive: true });
+        }
+
+        // Mobile double tap to close
+        let lastTap = 0;
+        imageArea?.addEventListener('touchend', (e) => {
+          const currentTime = new Date().getTime();
+          const tapLength = currentTime - lastTap;
+          if (tapLength < 500 && tapLength > 0) {
+            this.closeModal();
+          }
+          lastTap = currentTime;
+        });
+      }
     },
 
     updateComments() {
@@ -762,12 +717,10 @@
       const comment = state.comments[state.currentCommentIndex];
       if (!comment?.photos) return;
 
-      // Show loading immediately
+      // No loading - just update image directly
       const modalImage = document.getElementById('modal-image');
-      const loadingOverlay = document.getElementById('modal-loading');
-      if (modalImage && loadingOverlay) {
-        modalImage.style.opacity = '0';
-        loadingOverlay.style.display = 'flex';
+      if (modalImage) {
+        console.log('Navigating to new photo - no loading screen');
       }
 
       if (direction === 'next') {
@@ -826,86 +779,11 @@
       if (modalImage) {
         console.log('Navigating to new photo');
 
-        // Hide image
-        modalImage.style.display = 'none';
-
-        // Create new loading overlay if not exists
-        let loadingEl = document.getElementById('modal-loading');
-        if (!loadingEl) {
-          const imageContainer = modalImage.parentElement;
-          loadingEl = document.createElement('div');
-          loadingEl.id = 'modal-loading';
-          loadingEl.style.cssText = 'position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: rgba(0,0,0,0.5); z-index: 25;';
-          loadingEl.innerHTML = `
-            <div style="width: 48px; height: 48px; border: 4px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-            <span style="color: white; margin-top: 1rem; font-size: 14px;">Görsel yükleniyor...</span>
-          `;
-          imageContainer.appendChild(loadingEl);
-        } else {
-          loadingEl.style.display = 'flex';
-        }
-
-        // Update image with decode() method
-        const showNavigatedImageWhenReady = async () => {
-          try {
-            console.log('Starting navigation image decode process...');
-
-            // Wait for browser to decode and process the image
-            await modalImage.decode();
-
-            console.log('Navigation image decoded successfully');
-
-            // Additional check with requestAnimationFrame for rendering
-            requestAnimationFrame(() => {
-              requestAnimationFrame(() => {
-                console.log('Navigation image fully processed and ready to display');
-                const currentLoading = document.getElementById('modal-loading');
-                if (currentLoading && currentLoading.parentNode) {
-                  currentLoading.parentNode.removeChild(currentLoading);
-                }
-                modalImage.style.display = 'block';
-              });
-            });
-
-          } catch (error) {
-            console.log('Navigation decode failed, falling back to standard method:', error);
-
-            // Fallback to standard method if decode fails
-            const waitForImageProcessing = () => {
-              if (modalImage.naturalWidth > 0 && modalImage.naturalHeight > 0) {
-                requestAnimationFrame(() => {
-                  requestAnimationFrame(() => {
-                    console.log('Navigation image processed via fallback method');
-                    const currentLoading = document.getElementById('modal-loading');
-                    if (currentLoading && currentLoading.parentNode) {
-                      currentLoading.parentNode.removeChild(currentLoading);
-                    }
-                    modalImage.style.display = 'block';
-                  });
-                });
-              } else {
-                setTimeout(waitForImageProcessing, 50);
-              }
-            };
-            waitForImageProcessing();
-          }
-        };
-
-        modalImage.onload = showNavigatedImageWhenReady;
-
+        // Direct image update - no loading
         modalImage.src = newPhoto;
-
-        // Force show after 5 seconds (only if image still not loaded)
-        setTimeout(function () {
-          if (modalImage && modalImage.style.display === 'none') {
-            console.log('Force showing new image after timeout');
-            const currentLoading = document.getElementById('modal-loading');
-            if (currentLoading && currentLoading.parentNode) {
-              currentLoading.parentNode.removeChild(currentLoading);
-            }
-            modalImage.style.display = 'block';
-          }
-        }, 5000);
+        modalImage.style.display = 'block';
+        modalImage.style.opacity = '1';
+        console.log('Navigation image updated directly');
       }
 
       // Update comment info

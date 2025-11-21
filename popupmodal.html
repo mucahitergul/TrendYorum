@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Review Modal</title>
+    <style>
+        /* --- RESET & BASICS --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+            line-height: 1.5;
+        }
+
+        /* --- UTILITIES --- */
+        .hidden {
+            display: none !important;
+        }
+
+        .no-scroll {
+            overflow: hidden;
+        }
+
+        /* --- DEMO BUTTON --- */
+        .demo-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .open-modal-btn {
+            background-color: #111827;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .open-modal-btn:hover {
+            background-color: #1f2937;
+        }
+
+        .open-modal-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* --- MODAL OVERLAY --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --- MODAL CONTAINER --- */
+        .modal-container {
+            background-color: white;
+            width: 100%;
+            max-width: 1000px; /* Desktop max width */
+            height: 80vh;      /* Fixed height relative to viewport */
+            max-height: 800px;
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            display: flex;
+            flex-direction: row; /* Side by side on desktop */
+            overflow: hidden;
+            position: relative;
+            transform: scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: scale(1);
+        }
+
+        /* --- CLOSE BUTTON --- */
+        .close-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.2);
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .close-btn:hover {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        /* --- LEFT: IMAGE AREA --- */
+        .modal-image-area {
+            width: 60%; /* Desktop width */
+            background-color: black;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .main-image-container {
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main-image {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            display: block;
+            user-select: none;
+        }
+
+        /* Image Navigation Buttons */
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            transition: background 0.2s, opacity 0.2s;
+            opacity: 0; /* Hidden until hover on desktop */
+        }
+
+        .modal-image-area:hover .nav-btn {
+            opacity: 1;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-btn.prev { left: 16px; }
+        .nav-btn.next { right: 16px; }
+
+        /* Image Dots */
+        .slider-dots {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            transition: all 0.3s;
+        }
+
+        .dot.active {
+            width: 24px;
+            background-color: white;
+            border-radius: 4px;
+        }
+
+        /* --- RIGHT: CONTENT AREA --- */
+        .modal-content-area {
+            width: 40%; /* Desktop width */
+            background-color: #f9fafb;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .scrollable-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px;
+        }
+
+        /* Product Header */
+        .product-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e5e7eb;
+            color: #4b5563;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .product-header svg {
+            flex-shrink: 0;
+        }
+
+        .product-name {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* User Info */
+        .review-meta {
+            margin-bottom: 16px;
+        }
+
+        .stars {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 8px;
+            color: #fbbf24; /* Amber-400 */
+        }
+
+        .user-details {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .dot-separator {
+            width: 4px;
+            height: 4px;
+            background-color: #d1d5db;
+            border-radius: 50%;
+        }
+
+        /* Review Text */
+        .review-text {
+            color: #1f2937;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        /* Seller Info */
+        .seller-badge {
+            display: inline-flex;
+            align-items: center;
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            color: #6b7280;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .seller-name {
+            font-weight: 600;
+            color: #111827;
+            margin-right: 4px;
+        }
+
+        /* --- SCROLLBAR STYLING --- */
+        .scrollable-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .scrollable-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .scrollable-content::-webkit-scrollbar-thumb {
+            background-color: #d1d5db;
+            border-radius: 3px;
+        }
+
+        /* --- RESPONSIVE (TABLET & MOBILE) --- */
+        @media (max-width: 768px) {
+            .modal-overlay {
+                padding: 0; /* Full screen on mobile */
+                align-items: flex-end; /* Slide up effect optionally, or just full */
+            }
+
+            .modal-container {
+                flex-direction: column; /* Stack vertically */
+                width: 100%;
+                height: 100%; /* Full screen height */
+                max-width: 100%;
+                max-height: 100%;
+                border-radius: 0;
+            }
+
+            .modal-image-area {
+                width: 100%;
+                height: 45vh; /* Image takes top ~45% */
+                flex-shrink: 0;
+            }
+
+            .nav-btn {
+                opacity: 1; /* Always show nav buttons on mobile */
+            }
+
+            .modal-content-area {
+                width: 100%;
+                height: 55vh; /* Content takes bottom ~55% */
+                background: #fcfcfc;
+            }
+
+            .scrollable-content {
+                padding: 24px;
+            }
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0"
+  }
+}
+</script>
+</head>
+<body>
+
+    <!-- Demo Trigger -->
+    <div class="demo-container">
+        <h1>Ürün Değerlendirmesi</h1>
+        <p style="margin-bottom: 20px; color: #666;">Görsel detay modalını görüntülemek için butona tıklayın.</p>
+        <button id="triggerBtn" class="open-modal-btn">Değerlendirmeyi Gör</button>
+    </div>
+
+    <!-- Modal Structure -->
+    <div id="reviewModal" class="modal-overlay">
+        <div class="modal-container">
+            
+            <!-- Close Button -->
+            <button id="closeBtn" class="close-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+
+            <!-- Left: Image Gallery -->
+            <div class="modal-image-area">
+                <div class="main-image-container">
+                    <img id="mainImage" src="" alt="Product Review" class="main-image">
+                </div>
+
+                <!-- Navigation Buttons -->
+                <button id="prevBtn" class="nav-btn prev">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <button id="nextBtn" class="nav-btn next">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+
+                <!-- Dots -->
+                <div id="sliderDots" class="slider-dots">
+                    <!-- Dots injected by JS -->
+                </div>
+            </div>
+
+            <!-- Right: Content -->
+            <div class="modal-content-area">
+                <div class="scrollable-content">
+                    <!-- Product Name -->
+                    <div class="product-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                        <span class="product-name">Madetoll Cica Cream (Onarıcı Bakım Kremi)</span>
+                    </div>
+
+                    <!-- Rating & User -->
+                    <div class="review-meta">
+                        <div class="stars">
+                            <!-- 5 Stars -->
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        </div>
+                        <div class="user-details">
+                            <span class="user-name">H** M**</span>
+                            <span class="dot-separator"></span>
+                            <span>07.10.2025</span>
+                        </div>
+                    </div>
+
+                    <!-- Review Body -->
+                    <p class="review-text">
+                        Hayatımda aldığım en iyi kargoydu hediyeleri ürünüm hızlı kargo ve özenle teslim edildi zaten krem için bir şey söylememe gerek yok bir kere kullanan ne kadar güzel olduğunu biliyordur tereddüt etmeden sipariş verebilirsin ❤️
+                    </p>
+
+                    <!-- Seller Info -->
+                    <div class="seller-badge">
+                        <span class="seller-name">Madetoll by TazeKrem</span> satıcısından alındı
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock Data
+        const images = [
+            "https://cdn.dsmcdn.com/prod-product-review-media-migrated_1755700289924/img/2018925/2028895/2025904/40970378/43054330-1759852811776.jpeg",
+            "https://picsum.photos/800/800?random=1",
+            "https://picsum.photos/800/800?random=2"
+        ];
+
+        let currentIndex = 0;
+        const modal = document.getElementById('reviewModal');
+        const mainImage = document.getElementById('mainImage');
+        const sliderDots = document.getElementById('sliderDots');
+
+        // Initialize
+        function init() {
+            updateImage();
+            renderDots();
+            
+            // Open modal by default for demo purposes
+            openModal();
+        }
+
+        // Update Image Source
+        function updateImage() {
+            mainImage.src = images[currentIndex];
+            updateDots();
+        }
+
+        // Render Dots
+        function renderDots() {
+            sliderDots.innerHTML = '';
+            if (images.length <= 1) return;
+
+            images.forEach((_, idx) => {
+                const dot = document.createElement('div');
+                dot.className = `dot ${idx === currentIndex ? 'active' : ''}`;
+                sliderDots.appendChild(dot);
+            });
+        }
+
+        // Update Active Dot
+        function updateDots() {
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach((dot, idx) => {
+                if (idx === currentIndex) dot.classList.add('active');
+                else dot.classList.remove('active');
+            });
+        }
+
+        // Navigation Logic
+        document.getElementById('prevBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentIndex = currentIndex === 0 ? images.length - 1 : currentIndex - 1;
+            updateImage();
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentIndex = currentIndex === images.length - 1 ? 0 : currentIndex + 1;
+            updateImage();
+        });
+
+        // Modal Logic
+        function openModal() {
+            modal.classList.add('active');
+            document.body.classList.add('no-scroll');
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.classList.remove('no-scroll');
+        }
+
+        document.getElementById('triggerBtn').addEventListener('click', openModal);
+        document.getElementById('closeBtn').addEventListener('click', closeModal);
+
+        // Close on backdrop click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        // Start
+        init();
+    </script>
+</body>
+</html>

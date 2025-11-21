@@ -1,6 +1,6 @@
-/* Trendyol Reviews Styles - Modern Design with Poppins */
+/* Trendyol Reviews Styles - Clean & Optimized */
 
-/* Base container styles */
+/* Base Styles */
 #trendyol-reviews-container {
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
   margin: 2rem 0 !important;
@@ -19,20 +19,19 @@
   box-sizing: border-box !important;
 }
 
+/* Button & Input Styles */
 #trendyol-reviews-container button {
   cursor: pointer !important;
   border: none !important;
   background: none !important;
   padding: 0 !important;
   font-family: 'Poppins', inherit !important;
-  font-size: inherit !important;
   transition: all 0.3s ease !important;
 }
 
 #trendyol-reviews-container input {
   font-family: 'Poppins', inherit !important;
   outline: none !important;
-  font-size: inherit !important;
   border: 1px solid #e5e7eb !important;
   transition: all 0.3s ease !important;
 }
@@ -46,16 +45,7 @@
   transform: translateY(-1px) !important;
 }
 
-#trendyol-reviews-container button:not(:disabled):active {
-  transform: translateY(0) !important;
-}
-
-#trendyol-reviews-container svg {
-  display: inline-block !important;
-  vertical-align: middle !important;
-}
-
-/* Scrollbar hide */
+/* Scrollbar Hide */
 #trendyol-reviews-container .scrollbar-hide {
   -ms-overflow-style: none !important;
   scrollbar-width: none !important;
@@ -65,30 +55,24 @@
   display: none !important;
 }
 
-/* Gallery navigation buttons */
+/* Gallery Navigation */
 #trendyol-reviews-container .gallery-nav-btn {
   padding: 0.5rem !important;
   border-radius: 50% !important;
   transition: background-color 0.2s !important;
   background: transparent !important;
-  border: none !important;
 }
 
 #trendyol-reviews-container .gallery-nav-btn:hover {
   background-color: #f3f4f6 !important;
 }
 
-#trendyol-reviews-container .gallery-nav-btn:disabled {
-  opacity: 0.5 !important;
-  cursor: not-allowed !important;
-}
-
-/* Modal styles - Modern design */
+/* Modal Base Styles */
 #photo-modal {
   backdrop-filter: blur(8px) !important;
   position: fixed !important;
   inset: 0 !important;
-  background-color: rgba(0, 0, 0, 0.85) !important;
+  background-color: rgba(0, 0, 0, 0.9) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -106,37 +90,122 @@
   }
 }
 
+/* Desktop Modal */
 #photo-modal>div {
-  background: white !important;
-  border-radius: 1rem !important;
+  display: flex !important;
+  max-width: 1000px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+  border-radius: 5px !important;
   overflow: hidden !important;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
-  border: 1px solid #e5e7eb !important;
+  flex-shrink: 0 !important;
 }
 
-#photo-modal .modal-nav-btn {
-  transition: all 0.3s ease !important;
-  backdrop-filter: blur(10px) !important;
+#photo-modal .bg-black {
+  background-color: #000000 !important;
+  width: 600px !important;
+  height: 800px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  flex-shrink: 0 !important;
 }
 
-#photo-modal .modal-nav-btn:hover {
-  background-color: rgba(255, 255, 255, 0.4) !important;
-  transform: scale(1.1) !important;
+#photo-modal .bg-white {
+  background-color: #f8f8f8 !important;
+  width: 400px !important;
+  padding: 2rem !important;
+  overflow-y: auto !important;
 }
 
+/* Modal Controls */
 #photo-modal #modal-close {
-  transition: all 0.3s ease !important;
-  background: white !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0.5rem !important;
+  position: absolute !important;
+  top: 1rem !important;
+  right: 1rem !important;
+  z-index: 100 !important;
+  cursor: pointer !important;
+}
+
+#photo-modal #modal-close svg {
+  stroke: #000000 !important;
+  width: 24px !important;
+  height: 24px !important;
 }
 
 #photo-modal #modal-close:hover {
-  background: #f3f4f6 !important;
-  transform: rotate(90deg) scale(1.1) !important;
+  opacity: 0.7 !important;
 }
 
-/* Loading animation */
+/* Modal Navigation */
+#photo-modal .modal-nav-btn {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  border-radius: 50% !important;
+  width: 48px !important;
+  height: 48px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.3s ease !important;
+  border: none !important;
+  cursor: pointer !important;
+  position: absolute !important;
+  top: 50% !important;
+  z-index: 30 !important;
+  padding: 0 !important;
+}
+
+#photo-modal .modal-nav-btn[data-direction="prev"] {
+  left: 1rem !important;
+  transform: translateY(-50%) !important;
+}
+
+#photo-modal .modal-nav-btn[data-direction="next"] {
+  right: 1rem !important;
+  transform: translateY(-50%) !important;
+}
+
+#photo-modal .modal-nav-btn:hover {
+  background-color: rgba(255, 255, 255, 1) !important;
+  transform: translateY(-50%) scale(1.1) !important;
+}
+
+#photo-modal .modal-nav-btn svg {
+  stroke: #000000 !important;
+  width: 24px !important;
+  height: 24px !important;
+}
+
+/* Modal Image */
+#photo-modal #modal-image {
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+/* Modal Loading */
+#photo-modal #modal-loading {
+  position: absolute !important;
+  inset: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  z-index: 25 !important;
+}
+
+/* Loading Animation */
 @keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
   to {
     transform: rotate(360deg);
   }
@@ -146,642 +215,7 @@
   animation: spin 1s linear infinite !important;
 }
 
-/* Hover effects */
-#trendyol-reviews-container .group:hover .group-hover\:scale-105 {
-  transform: scale(1.05) !important;
-}
-
-/* Transition classes */
-#trendyol-reviews-container .transition-all {
-  transition-property: all !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
-  transition-duration: 150ms !important;
-}
-
-#trendyol-reviews-container .transition-colors {
-  transition-property: color, background-color, border-color !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
-  transition-duration: 150ms !important;
-}
-
-#trendyol-reviews-container .transition-opacity {
-  transition-property: opacity !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
-  transition-duration: 150ms !important;
-}
-
-#trendyol-reviews-container .transition-transform {
-  transition-property: transform !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
-  transition-duration: 150ms !important;
-}
-
-#trendyol-reviews-container .transition-shadow {
-  transition-property: box-shadow !important;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
-  transition-duration: 150ms !important;
-}
-
-#trendyol-reviews-container .duration-200 {
-  transition-duration: 200ms !important;
-}
-
-#trendyol-reviews-container .duration-300 {
-  transition-duration: 300ms !important;
-}
-
-/* Color utilities */
-#trendyol-reviews-container .text-yellow-400 {
-  color: #fbbf24 !important;
-}
-
-#trendyol-reviews-container .text-gray-300 {
-  color: #d1d5db !important;
-}
-
-#trendyol-reviews-container .text-gray-400 {
-  color: #9ca3af !important;
-}
-
-#trendyol-reviews-container .text-gray-500 {
-  color: #6b7280 !important;
-}
-
-#trendyol-reviews-container .text-gray-600 {
-  color: #4b5563 !important;
-}
-
-#trendyol-reviews-container .text-gray-700 {
-  color: #374151 !important;
-}
-
-#trendyol-reviews-container .text-gray-800 {
-  color: #1f2937 !important;
-}
-
-#trendyol-reviews-container .text-gray-900 {
-  color: #111827 !important;
-}
-
-#trendyol-reviews-container .text-white {
-  color: #ffffff !important;
-}
-
-#trendyol-reviews-container .text-orange-500 {
-  color: #f97316 !important;
-}
-
-#trendyol-reviews-container .bg-white {
-  background-color: #ffffff !important;
-}
-
-#trendyol-reviews-container .bg-gray-50 {
-  background-color: #f9fafb !important;
-  transition: background-color 0.2s ease !important;
-}
-
-#trendyol-reviews-container .bg-gray-100 {
-  background-color: #f3f4f6 !important;
-}
-
-#trendyol-reviews-container .bg-black {
-  background-color: #000000 !important;
-}
-
-#trendyol-reviews-container .bg-orange-50 {
-  background-color: #fff7ed !important;
-  transition: background-color 0.2s ease !important;
-}
-
-#trendyol-reviews-container .bg-orange-500 {
-  background-color: #f97316 !important;
-  transition: all 0.3s ease !important;
-}
-
-#trendyol-reviews-container .bg-orange-600 {
-  background-color: #ea580c !important;
-}
-
-/* Main container card */
-#trendyol-reviews-container>div {
-  background: white !important;
-  border: 1px solid #e5e7eb !important;
-  border-radius: 0.75rem !important;
-  overflow: hidden !important;
-}
-
-#photo-modal .bg-opacity-20 {
-  background-color: rgba(255, 255, 255, 0.2) !important;
-}
-
-#photo-modal .bg-opacity-30 {
-  background-color: rgba(255, 255, 255, 0.3) !important;
-}
-
-#photo-modal .bg-opacity-50 {
-  background-color: rgba(0, 0, 0, 0.5) !important;
-}
-
-/* Border utilities - Modern style */
-#trendyol-reviews-container .border {
-  border: 1px solid #e5e7eb !important;
-}
-
-#trendyol-reviews-container .border-b {
-  border-bottom: 1px solid #e5e7eb !important;
-}
-
-#trendyol-reviews-container .border-gray-200 {
-  border-color: #e5e7eb !important;
-}
-
-#trendyol-reviews-container .border-gray-300 {
-  border-color: #e5e7eb !important;
-}
-
-#trendyol-reviews-container .border-orange-500 {
-  border-color: #f97316 !important;
-}
-
-#trendyol-reviews-container .rounded {
-  border-radius: 0.5rem !important;
-}
-
-#trendyol-reviews-container .rounded-lg {
-  border-radius: 0.75rem !important;
-}
-
-#trendyol-reviews-container .rounded-full {
-  border-radius: 9999px !important;
-}
-
-/* Shadow utilities - Modern soft shadows */
-#trendyol-reviews-container .shadow-sm {
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08) !important;
-}
-
-#trendyol-reviews-container .shadow-md {
-  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.08) !important;
-}
-
-#trendyol-reviews-container .shadow-lg,
-#photo-modal .shadow-lg {
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
-}
-
-#trendyol-reviews-container .hover\:shadow-md:hover {
-  box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.12) !important;
-  transition: box-shadow 0.3s ease !important;
-}
-
-#trendyol-reviews-container .hover\:bg-gray-50:hover {
-  background-color: #f9fafb !important;
-}
-
-#trendyol-reviews-container .hover\:bg-gray-100:hover {
-  background-color: #f3f4f6 !important;
-}
-
-#trendyol-reviews-container .hover\:bg-orange-50:hover {
-  background-color: #fff7ed !important;
-}
-
-#trendyol-reviews-container .hover\:bg-orange-600:hover {
-  background-color: #ea580c !important;
-}
-
-/* Layout utilities */
-#trendyol-reviews-container .flex,
-#photo-modal .flex {
-  display: flex !important;
-}
-
-#trendyol-reviews-container .flex-1 {
-  flex: 1 1 0% !important;
-}
-
-#trendyol-reviews-container .flex-shrink-0 {
-  flex-shrink: 0 !important;
-}
-
-#trendyol-reviews-container .items-center,
-#photo-modal .items-center {
-  align-items: center !important;
-}
-
-#trendyol-reviews-container .justify-center,
-#photo-modal .justify-center {
-  justify-content: center !important;
-}
-
-#trendyol-reviews-container .justify-between {
-  justify-content: space-between !important;
-}
-
-#trendyol-reviews-container .gap-1 {
-  gap: 0.25rem !important;
-}
-
-#trendyol-reviews-container .gap-2 {
-  gap: 0.5rem !important;
-}
-
-#trendyol-reviews-container .gap-3 {
-  gap: 0.75rem !important;
-}
-
-#trendyol-reviews-container .gap-4 {
-  gap: 1rem !important;
-}
-
-#trendyol-reviews-container .gap-6 {
-  gap: 1.5rem !important;
-}
-
-#trendyol-reviews-container .overflow-hidden,
-#photo-modal .overflow-hidden {
-  overflow: hidden !important;
-}
-
-#trendyol-reviews-container .overflow-x-auto {
-  overflow-x: auto !important;
-}
-
-#trendyol-reviews-container .overflow-y-auto,
-#photo-modal .overflow-y-auto {
-  overflow-y: auto !important;
-}
-
-/* Positioning */
-#trendyol-reviews-container .relative,
-#photo-modal .relative {
-  position: relative !important;
-}
-
-#trendyol-reviews-container .absolute,
-#photo-modal .absolute {
-  position: absolute !important;
-}
-
-#photo-modal .fixed {
-  position: fixed !important;
-}
-
-#photo-modal .inset-0 {
-  top: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  left: 0 !important;
-}
-
-#trendyol-reviews-container .top-0 {
-  top: 0 !important;
-}
-
-#trendyol-reviews-container .right-0 {
-  right: 0 !important;
-}
-
-#trendyol-reviews-container .bottom-0 {
-  bottom: 0 !important;
-}
-
-#trendyol-reviews-container .left-0 {
-  left: 0 !important;
-}
-
-#trendyol-reviews-container .top-4,
-#photo-modal .top-4 {
-  top: 1rem !important;
-}
-
-#trendyol-reviews-container .right-4,
-#photo-modal .right-4 {
-  right: 1rem !important;
-}
-
-#trendyol-reviews-container .left-4,
-#photo-modal .left-4 {
-  left: 1rem !important;
-}
-
-#trendyol-reviews-container .top-1\/2,
-#photo-modal .top-1\/2 {
-  top: 50% !important;
-}
-
-#trendyol-reviews-container .top-full {
-  top: 100% !important;
-}
-
-#trendyol-reviews-container .left-3 {
-  left: 0.75rem !important;
-}
-
-#trendyol-reviews-container .top-2\.5 {
-  top: 0.625rem !important;
-}
-
-#trendyol-reviews-container .transform,
-#photo-modal .transform {
-  transform: translate(var(--tw-translate-x, 0), var(--tw-translate-y, 0)) !important;
-}
-
-#trendyol-reviews-container .-translate-y-1\/2,
-#photo-modal .-translate-y-1\/2 {
-  --tw-translate-y: -50%;
-  transform: translateY(-50%) !important;
-}
-
-/* Sizing */
-#trendyol-reviews-container .w-4 {
-  width: 1rem !important;
-}
-
-#trendyol-reviews-container .w-5 {
-  width: 1.25rem !important;
-}
-
-#trendyol-reviews-container .w-6 {
-  width: 1.5rem !important;
-}
-
-#trendyol-reviews-container .w-8 {
-  width: 2rem !important;
-}
-
-#trendyol-reviews-container .w-16 {
-  width: 4rem !important;
-}
-
-#trendyol-reviews-container .w-20 {
-  width: 5rem !important;
-}
-
-#trendyol-reviews-container .w-80,
-#photo-modal .w-80 {
-  width: 20rem !important;
-}
-
-#trendyol-reviews-container .w-full,
-#photo-modal .w-full {
-  width: 100% !important;
-}
-
-#trendyol-reviews-container .h-4 {
-  height: 1rem !important;
-}
-
-#trendyol-reviews-container .h-5 {
-  height: 1.25rem !important;
-}
-
-#trendyol-reviews-container .h-6 {
-  height: 1.5rem !important;
-}
-
-#trendyol-reviews-container .h-8 {
-  height: 2rem !important;
-}
-
-#trendyol-reviews-container .h-16 {
-  height: 4rem !important;
-}
-
-#trendyol-reviews-container .h-20 {
-  height: 5rem !important;
-}
-
-#trendyol-reviews-container .h-full {
-  height: 100% !important;
-}
-
-#photo-modal .max-w-4xl {
-  max-width: 56rem !important;
-}
-
-#photo-modal .max-w-full {
-  max-width: 100% !important;
-}
-
-#photo-modal .max-h-full {
-  max-height: 100% !important;
-}
-
-#photo-modal .max-h-\[90vh\] {
-  max-height: 90vh !important;
-}
-
-#trendyol-reviews-container .min-w-48 {
-  min-width: 12rem !important;
-}
-
-/* Spacing */
-#trendyol-reviews-container .p-2,
-#photo-modal .p-2 {
-  padding: 0.5rem !important;
-}
-
-#trendyol-reviews-container .p-3,
-#photo-modal .p-3 {
-  padding: 0.75rem !important;
-}
-
-#trendyol-reviews-container .p-4 {
-  padding: 1rem !important;
-}
-
-#trendyol-reviews-container .p-6,
-#photo-modal .p-6 {
-  padding: 1.5rem !important;
-}
-
-#trendyol-reviews-container .px-3 {
-  padding-left: 0.75rem !important;
-  padding-right: 0.75rem !important;
-}
-
-#trendyol-reviews-container .px-4 {
-  padding-left: 1rem !important;
-  padding-right: 1rem !important;
-}
-
-#trendyol-reviews-container .px-6 {
-  padding-left: 1.5rem !important;
-  padding-right: 1.5rem !important;
-}
-
-#trendyol-reviews-container .py-1 {
-  padding-top: 0.25rem !important;
-  padding-bottom: 0.25rem !important;
-}
-
-#trendyol-reviews-container .py-2 {
-  padding-top: 0.5rem !important;
-  padding-bottom: 0.5rem !important;
-}
-
-#trendyol-reviews-container .pl-10 {
-  padding-left: 2.5rem !important;
-}
-
-#trendyol-reviews-container .pb-2 {
-  padding-bottom: 0.5rem !important;
-}
-
-#trendyol-reviews-container .mb-2,
-#photo-modal .mb-2 {
-  margin-bottom: 0.5rem !important;
-}
-
-#trendyol-reviews-container .mb-3 {
-  margin-bottom: 0.75rem !important;
-}
-
-#trendyol-reviews-container .mb-4,
-#photo-modal .mb-4 {
-  margin-bottom: 1rem !important;
-}
-
-#trendyol-reviews-container .mb-6 {
-  margin-bottom: 1.5rem !important;
-}
-
-#trendyol-reviews-container .mr-1 {
-  margin-right: 0.25rem !important;
-}
-
-#trendyol-reviews-container .mx-2 {
-  margin-left: 0.5rem !important;
-  margin-right: 0.5rem !important;
-}
-
-#trendyol-reviews-container .mx-3 {
-  margin-left: 0.75rem !important;
-  margin-right: 0.75rem !important;
-}
-
-#trendyol-reviews-container .mx-4,
-#photo-modal .mx-4 {
-  margin-left: 1rem !important;
-  margin-right: 1rem !important;
-}
-
-#trendyol-reviews-container .mt-1 {
-  margin-top: 0.25rem !important;
-}
-
-/* Typography - Modern Poppins */
-#trendyol-reviews-container .text-sm {
-  font-size: 0.875rem !important;
-  line-height: 1.5rem !important;
-  letter-spacing: 0.01em !important;
-}
-
-#trendyol-reviews-container .text-lg {
-  font-size: 1.125rem !important;
-  line-height: 1.75rem !important;
-  letter-spacing: -0.01em !important;
-}
-
-#trendyol-reviews-container .text-2xl {
-  font-size: 1.5rem !important;
-  line-height: 2rem !important;
-  font-weight: 600 !important;
-  letter-spacing: -0.02em !important;
-}
-
-#trendyol-reviews-container .font-medium {
-  font-weight: 500 !important;
-}
-
-#trendyol-reviews-container .font-bold {
-  font-weight: 600 !important;
-}
-
-#trendyol-reviews-container .leading-relaxed {
-  line-height: 1.7 !important;
-}
-
-#trendyol-reviews-container .text-left {
-  text-align: left !important;
-}
-
-#trendyol-reviews-container .text-center {
-  text-align: center !important;
-}
-
-/* Headings */
-#trendyol-reviews-container h2,
-#trendyol-reviews-container h3 {
-  font-weight: 600 !important;
-  letter-spacing: -0.02em !important;
-}
-
-/* Z-index */
-#trendyol-reviews-container .z-10,
-#photo-modal .z-10 {
-  z-index: 10 !important;
-}
-
-#photo-modal .z-20 {
-  z-index: 20 !important;
-}
-
-#photo-modal .z-50 {
-  z-index: 50 !important;
-}
-
-/* Cursor */
-#trendyol-reviews-container .cursor-pointer {
-  cursor: pointer !important;
-}
-
-#trendyol-reviews-container .cursor-not-allowed {
-  cursor: not-allowed !important;
-}
-
-/* Pointer events */
-#trendyol-reviews-container .pointer-events-none {
-  pointer-events: none !important;
-}
-
-/* Object fit */
-#trendyol-reviews-container .object-cover,
-#photo-modal .object-cover {
-  object-fit: cover !important;
-}
-
-#photo-modal .object-contain {
-  object-fit: contain !important;
-}
-
-/* Scroll behavior */
-#trendyol-reviews-container .scroll-smooth {
-  scroll-behavior: smooth !important;
-}
-
-/* Opacity */
-#photo-modal .opacity-0 {
-  opacity: 0 !important;
-}
-
-#trendyol-reviews-container .opacity-50 {
-  opacity: 0.5 !important;
-}
-
-#photo-modal .opacity-100 {
-  opacity: 1 !important;
-}
-
-/* Divide */
-#trendyol-reviews-container .divide-y> :not([hidden])~ :not([hidden]) {
-  border-top-width: 1px !important;
-  border-top-style: solid !important;
-  border-color: #e5e7eb !important;
-}
-
-/* Gallery responsive - Clean design */
+/* Gallery Responsive */
 #trendyol-reviews-container .gallery-photo-item {
   width: calc((100% - 7 * 0.75rem) / 8) !important;
   min-width: 100px !important;
@@ -809,28 +243,6 @@
     width: calc((100% - 3 * 0.75rem) / 4) !important;
     min-width: 80px !important;
   }
-
-  #photo-modal .max-w-4xl {
-    max-width: 100% !important;
-  }
-
-  #photo-modal .mx-4 {
-    margin-left: 1rem !important;
-    margin-right: 1rem !important;
-  }
-
-  #photo-modal .w-80 {
-    width: 100% !important;
-  }
-
-  #photo-modal>div>.flex {
-    flex-direction: column !important;
-  }
-
-  #photo-modal .relative[style*="width: 400px"] {
-    width: 100% !important;
-    height: 400px !important;
-  }
 }
 
 @media (max-width: 480px) {
@@ -840,184 +252,7 @@
   }
 }
 
-/* Modal Split Design - Trendyol Style */
-#photo-modal {
-  backdrop-filter: blur(8px) !important;
-  background-color: rgba(0, 0, 0, 0.9) !important;
-}
-
-#photo-modal>div {
-  display: flex !important;
-  /* max-width: 1000px !important; */
-  /* max-height: 90vh !important; */
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
-  border-radius: 5px !important;
-  overflow: hidden !important;
-}
-
-#photo-modal .bg-black {
-  background-color: #000000 !important;
-  width: 400px !important;
-  height: 500px !important;
-  min-width: 561px !important;
-  min-height: 800px !important;
-  max-width: 600px !important;
-  max-height: 800px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  position: relative !important;
-  flex-shrink: 0 !important;
-}
-
-#photo-modal .bg-white {
-  background-color: #f8f8f8 !important;
-  width: 400px !important;
-  padding: 2rem !important;
-  overflow-y: auto !important;
-}
-
-#photo-modal #modal-close {
-  background: transparent !important;
-  border: none !important;
-  padding: 0.5rem !important;
-  position: absolute !important;
-  top: 1rem !important;
-  right: 1rem !important;
-  z-index: 100 !important;
-  cursor: pointer !important;
-}
-
-#photo-modal #modal-close svg {
-  stroke: #000000 !important;
-  width: 24px !important;
-  height: 24px !important;
-}
-
-#photo-modal #modal-close:hover {
-  opacity: 0.7 !important;
-}
-
-#photo-modal #modal-loading {
-  display: flex !important;
-  background-color: rgba(0, 0, 0, 0.75) !important;
-}
-
-/* Modal navigation buttons - White circles */
-#photo-modal .modal-nav-btn {
-  background-color: rgba(255, 255, 255, 0.9) !important;
-  border-radius: 50% !important;
-  width: 48px !important;
-  height: 48px !important;
-  min-width: 48px !important;
-  min-height: 48px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  transition: all 0.3s ease !important;
-  border: none !important;
-  cursor: pointer !important;
-  position: absolute !important;
-  top: 50% !important;
-  z-index: 30 !important;
-  padding: 0 !important;
-}
-
-#photo-modal .modal-nav-btn[data-direction="prev"] {
-  left: 1rem !important;
-  transform: translateY(-50%) !important;
-}
-
-#photo-modal .modal-nav-btn[data-direction="next"] {
-  right: 1rem !important;
-  transform: translateY(-50%) !important;
-}
-
-#photo-modal .modal-nav-btn:hover {
-  background-color: rgba(255, 255, 255, 1) !important;
-}
-
-#photo-modal .modal-nav-btn[data-direction="prev"]:hover {
-  transform: translateY(-50%) scale(1.1) !important;
-}
-
-#photo-modal .modal-nav-btn[data-direction="next"]:hover {
-  transform: translateY(-50%) scale(1.1) !important;
-}
-
-#photo-modal .modal-nav-btn svg {
-  stroke: #000000 !important;
-  width: 24px !important;
-  height: 24px !important;
-}
-
-/* Modal image */
-#photo-modal #modal-image {
-  max-width: 100% !important;
-  max-height: 100% !important;
-  object-fit: contain !important;
-  position: relative !important;
-  z-index: 10 !important;
-}
-
-#photo-modal #modal-image[style*="display: none"] {
-  display: none !important;
-}
-
-#photo-modal #modal-image[style*="display: block"] {
-  display: block !important;
-}
-
-/* Modal loading overlay */
-#photo-modal #modal-loading {
-  position: absolute !important;
-  inset: 0 !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  background-color: rgba(0, 0, 0, 0.5) !important;
-  z-index: 25 !important;
-}
-
-/* Override display with inline styles */
-#photo-modal #modal-loading[style*="display: none"] {
-  display: none !important;
-}
-
-#photo-modal #modal-loading[style*="display: flex"] {
-  display: flex !important;
-}
-}
-
-/* Spi
-n animation for loading */
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* 
-Fixed modal dimensions */
-#photo-modal>div {
-  display: flex !important;
-  /* width: 1000px !important; */
-  /* height: 800px !important; */
-  max-width: 1000px !important;
-  /* max-height: 800px !important; */
-  /* min-width: 1000px !important; */
-  /* min-height: 800px !important; */
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
-  border-radius: 5px !important;
-  overflow: hidden !important;
-  flex-shrink: 0 !important;
-}
-
-/* Responsive Trendyol Logo */
+/* Responsive Logo */
 #trendyol-logo {
   width: 200px !important;
   height: auto !important;
@@ -1029,150 +264,71 @@ Fixed modal dimensions */
   }
 }
 
-/* Mobile responsive layout fixes */
-@media (max-width: 768px) {
-  #trendyol-reviews-container .flex-col {
-    flex-direction: column !important;
-  }
-
-  #trendyol-reviews-container .sm\:flex-row {
-    flex-direction: column !important;
-  }
-
-  #trendyol-reviews-container .w-full {
-    width: 100% !important;
-  }
-
-  #trendyol-reviews-container .sm\:w-auto {
-    width: 100% !important;
-  }
-}
-
-@media (min-width: 640px) {
-  #trendyol-reviews-container .sm\:flex-row {
-    flex-direction: row !important;
-  }
-
-  #trendyol-reviews-container .sm\:w-auto {
-    width: auto !important;
-  }
-}
-
-/* So
-rt dropdown z-index fix */
+/* Sort Dropdown */
 #sort-dropdown {
   z-index: 9999 !important;
   position: absolute !important;
 }
 
-/* Gallery container z-index */
-#trendyol-reviews-container .gallery-container {
-  z-index: 1 !important;
-  position: relative !important;
+/* Mobile Layout Fixes */
+@media (max-width: 768px) {
+  .search-filter-container {
+    flex-direction: column !important;
+  }
 }
 
-/* Ensure dropdown is always on top */
-#trendyol-reviews-container .relative {
-  z-index: auto !important;
+@media (min-width: 640px) {
+  .search-filter-container {
+    flex-direction: row !important;
+  }
 }
 
-#trendyol-reviews-container .relative:has(#sort-dropdown) {
-  z-index: 9999 !important;
-}
-
-/* Mobil
-e responsive modal */
+/* Modal Container Classes */
 .modal-container {
-  display: flex !important;
-  flex-direction: row !important;
-  max-width: 1000px !important;
-  max-height: 800px !important;
-  /* width: 1000px !important; */
-  /* height: 800px !important; */
-  background: white !important;
-  border-radius: 8px !important;
-  overflow: hidden !important;
+  display: flex;
+  flex-direction: row;
+  max-width: 1000px;
+  max-height: 800px;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .modal-image-area {
-  width: 600px !important;
-  height: 800px !important;
-  min-width: 600px !important;
-  flex-shrink: 0 !important;
+  width: 600px;
+  height: 800px;
+  min-width: 600px;
+  flex-shrink: 0;
 }
 
 .modal-comment-area {
-  width: 400px !important;
-  padding: 2rem !important;
-  flex-shrink: 0 !important;
+  width: 400px;
+  padding: 2rem;
+  flex-shrink: 0;
 }
 
-/* Mobile styles */
+/* Mobile Scroll Enhancements */
 @media (max-width: 768px) {
-  #photo-modal>div {
-    display: flex;
-    width: 1000px !important;
-    height: 800px !important;
-    max-width: 1000px !important;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
-    border-radius: 5px !important;
-    overflow: hidden !important;
-    flex-shrink: 0 !important;
-    align-content: center;
-    align-items: center;
+  .modal-comment-area::-webkit-scrollbar {
+    width: 4px !important;
   }
 
-  .modal-container {
-    flex-direction: column !important;
-    /* width: 22vw !important; */
-    /* height: 95vh !important; */
-    max-width: 95vw !important;
-    max-height: 95vh !important;
+  .modal-comment-area::-webkit-scrollbar-track {
+    background: #f1f1f1 !important;
+    border-radius: 2px !important;
   }
 
-  .modal-image-area {
-    width: 100% !important;
-    height: 60vh !important;
-    min-width: auto !important;
-    flex: 0 0 60vh !important;
+  .modal-comment-area::-webkit-scrollbar-thumb {
+    background: #c1c1c1 !important;
+    border-radius: 2px !important;
   }
 
-  .modal-comment-area {
-    width: 100% !important;
-    height: 35vh !important;
-    flex: 0 0 35vh !important;
-    padding: 1rem !important;
-  }
-
-  #photo-modal #modal-close {
-    top: 0.5rem !important;
-    right: 0.5rem !important;
-    background: rgba(0, 0, 0, 0.7) !important;
-    border-radius: 50% !important;
-    padding: 0.5rem !important;
-  }
-
-  #photo-modal #modal-close svg {
-    stroke: white !important;
-  }
-
-  .modal-nav-btn {
-    width: 40px !important;
-    height: 40px !important;
-    min-width: 40px !important;
-    min-height: 40px !important;
-  }
-
-  .modal-nav-btn[data-direction="prev"] {
-    left: 0.5rem !important;
-  }
-
-  .modal-nav-btn[data-direction="next"] {
-    right: 0.5rem !important;
+  .modal-comment-area::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8 !important;
   }
 }
 
-/* Tablet styles */
+/* Tablet Styles */
 @media (max-width: 1024px) and (min-width: 769px) {
   .modal-container {
     width: 90vw !important;
@@ -1190,4 +346,562 @@ e responsive modal */
     width: 40% !important;
     padding: 1.5rem !important;
   }
+}
+
+/* Essential Utility Classes */
+#trendyol-reviews-container .flex {
+  display: flex !important;
+}
+
+#trendyol-reviews-container .items-center {
+  align-items: center !important;
+}
+
+#trendyol-reviews-container .justify-center {
+  justify-content: center !important;
+}
+
+#trendyol-reviews-container .justify-between {
+  justify-content: space-between !important;
+}
+
+#trendyol-reviews-container .gap-1 {
+  gap: 0.25rem !important;
+}
+
+#trendyol-reviews-container .gap-2 {
+  gap: 0.5rem !important;
+}
+
+#trendyol-reviews-container .gap-3 {
+  gap: 0.75rem !important;
+}
+
+#trendyol-reviews-container .gap-4 {
+  gap: 1rem !important;
+}
+
+#trendyol-reviews-container .gap-6 {
+  gap: 1.5rem !important;
+}
+
+#trendyol-reviews-container .w-full {
+  width: 100% !important;
+}
+
+#trendyol-reviews-container .h-full {
+  height: 100% !important;
+}
+
+#trendyol-reviews-container .relative {
+  position: relative !important;
+}
+
+#trendyol-reviews-container .absolute {
+  position: absolute !important;
+}
+
+#trendyol-reviews-container .overflow-hidden {
+  overflow: hidden !important;
+}
+
+#trendyol-reviews-container .overflow-x-auto {
+  overflow-x: auto !important;
+}
+
+#trendyol-reviews-container .overflow-y-auto {
+  overflow-y: auto !important;
+}
+
+#trendyol-reviews-container .cursor-pointer {
+  cursor: pointer !important;
+}
+
+#trendyol-reviews-container .text-sm {
+  font-size: 0.875rem !important;
+}
+
+#trendyol-reviews-container .text-lg {
+  font-size: 1.125rem !important;
+}
+
+#trendyol-reviews-container .font-medium {
+  font-weight: 500 !important;
+}
+
+#trendyol-reviews-container .leading-relaxed {
+  line-height: 1.7 !important;
+}
+
+#trendyol-reviews-container .text-center {
+  text-align: center !important;
+}
+
+#trendyol-reviews-container .bg-white {
+  background-color: #ffffff !important;
+}
+
+#trendyol-reviews-container .bg-gray-50 {
+  background-color: #f9fafb !important;
+}
+
+#trendyol-reviews-container .bg-orange-50 {
+  background-color: #fff7ed !important;
+}
+
+#trendyol-reviews-container .bg-orange-500 {
+  background-color: #f97316 !important;
+}
+
+#trendyol-reviews-container .bg-orange-600 {
+  background-color: #ea580c !important;
+}
+
+#trendyol-reviews-container .text-gray-500 {
+  color: #6b7280 !important;
+}
+
+#trendyol-reviews-container .text-gray-600 {
+  color: #4b5563 !important;
+}
+
+#trendyol-reviews-container .text-gray-700 {
+  color: #374151 !important;
+}
+
+#trendyol-reviews-container .text-gray-800 {
+  color: #1f2937 !important;
+}
+
+#trendyol-reviews-container .text-gray-900 {
+  color: #111827 !important;
+}
+
+#trendyol-reviews-container .text-orange-500 {
+  color: #f97316 !important;
+}
+
+#trendyol-reviews-container .border {
+  border: 1px solid #e5e7eb !important;
+}
+
+#trendyol-reviews-container .border-b {
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+#trendyol-reviews-container .border-orange-500 {
+  border-color: #f97316 !important;
+}
+
+#trendyol-reviews-container .rounded-lg {
+  border-radius: 0.75rem !important;
+}
+
+#trendyol-reviews-container .rounded-full {
+  border-radius: 9999px !important;
+}
+
+#trendyol-reviews-container .shadow-sm {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08) !important;
+}
+
+#trendyol-reviews-container .p-6 {
+  padding: 1.5rem !important;
+}
+
+#trendyol-reviews-container .px-3 {
+  padding-left: 0.75rem !important;
+  padding-right: 0.75rem !important;
+}
+
+#trendyol-reviews-container .px-4 {
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+
+#trendyol-reviews-container .py-2 {
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+}
+
+#trendyol-reviews-container .mb-2 {
+  margin-bottom: 0.5rem !important;
+}
+
+#trendyol-reviews-container .mb-3 {
+  margin-bottom: 0.75rem !important;
+}
+
+#trendyol-reviews-container .mb-4 {
+  margin-bottom: 1rem !important;
+}
+
+#trendyol-reviews-container .mb-6 {
+  margin-bottom: 1.5rem !important;
+}
+
+#trendyol-reviews-container .mx-2 {
+  margin-left: 0.5rem !important;
+  margin-right: 0.5rem !important;
+}
+
+#trendyol-reviews-container .hover\:bg-gray-50:hover {
+  background-color: #f9fafb !important;
+}
+
+#trendyol-reviews-container .hover\:bg-orange-50:hover {
+  background-color: #fff7ed !important;
+}
+
+#trendyol-reviews-container .hover\:bg-orange-600:hover {
+  background-color: #ea580c !important;
+}
+
+#trendyol-reviews-container .hover\:shadow-md:hover {
+  box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.12) !important;
+}
+
+#trendyol-reviews-container .group:hover .group-hover\:scale-105 {
+  transform: scale(1.05) !important;
+}
+
+#trendyol-reviews-container .scroll-smooth {
+  scroll-behavior: smooth !important;
+}
+
+#trendyol-reviews-container .divide-y> :not([hidden])~ :not([hidden]) {
+  border-top: 1px solid #e5e7eb !important;
+}
+
+/* Photo Modal Utilities */
+#photo-modal .flex {
+  display: flex !important;
+}
+
+#photo-modal .items-center {
+  align-items: center !important;
+}
+
+#photo-modal .justify-center {
+  justify-content: center !important;
+}
+
+#photo-modal .relative {
+  position: relative !important;
+}
+
+#photo-modal .absolute {
+  position: absolute !important;
+}
+
+#photo-modal .overflow-hidden {
+  overflow: hidden !important;
+}
+
+#photo-modal .overflow-y-auto {
+  overflow-y: auto !important;
+}
+
+#photo-modal .object-contain {
+  object-fit: contain !important;
+}
+
+#photo-modal .bg-opacity-20 {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+#photo-modal .bg-opacity-30 {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+#photo-modal .transform {
+  transform: translate(var(--tw-translate-x, 0), var(--tw-translate-y, 0)) !important;
+}
+
+#photo-modal .-translate-y-1\/2 {
+  transform: translateY(-50%) !important;
+}
+
+/* Mobile
+ Touch & Gesture Enhancements */
+@media (max-width: 768px) {
+
+  /* Touch-friendly tap targets */
+  #photo-modal .modal-nav-btn,
+  #photo-modal #modal-close {
+    -webkit-tap-highlight-color: transparent !important;
+    touch-action: manipulation !important;
+  }
+
+  /* Smooth modal entrance animation */
+  #photo-modal>div {
+    animation: mobileModalSlideUp 0.3s ease-out !important;
+  }
+
+  @keyframes mobileModalSlideUp {
+    from {
+      transform: translateY(100%) !important;
+      opacity: 0 !important;
+    }
+
+    to {
+      transform: translateY(0) !important;
+      opacity: 1 !important;
+    }
+  }
+
+  /* Comment area slide animation */
+  .modal-comment-area {
+    animation: commentAreaSlideUp 0.4s ease-out 0.1s both !important;
+  }
+
+  @keyframes commentAreaSlideUp {
+    from {
+      transform: translateY(100%) !important;
+      opacity: 0 !important;
+    }
+
+    to {
+      transform: translateY(0) !important;
+      opacity: 1 !important;
+    }
+  }
+
+  /* Image fade-in animation */
+  #photo-modal #modal-image {
+    animation: imageFadeIn 0.5s ease-out 0.2s both !important;
+  }
+
+  @keyframes imageFadeIn {
+    from {
+      opacity: 0 !important;
+      transform: scale(0.95) !important;
+    }
+
+    to {
+      opacity: 1 !important;
+      transform: scale(1) !important;
+    }
+  }
+
+  /* Safe area adjustments for notched devices */
+  #photo-modal #modal-close {
+    top: max(1rem, env(safe-area-inset-top)) !important;
+    right: max(1rem, env(safe-area-inset-right)) !important;
+  }
+
+  .modal-comment-area {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom)) !important;
+  }
+
+  /* Improved touch feedback */
+  .modal-nav-btn:active {
+    transform: translateY(-50%) scale(0.95) !important;
+    transition: transform 0.1s ease !important;
+  }
+
+  #photo-modal #modal-close:active {
+    transform: scale(0.95) !important;
+    transition: transform 0.1s ease !important;
+  }
+
+  /* Better visual hierarchy */
+  .modal-comment-area h3,
+  .modal-comment-area .font-medium {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    color: #1f2937 !important;
+  }
+
+  /* Enhanced star rating for mobile */
+  .modal-comment-area .flex span {
+    font-size: 1.1rem !important;
+    margin-right: 2px !important;
+  }
+
+  /* Mobile-optimized spacing */
+  .modal-comment-area>div:first-child {
+    margin-bottom: 1.25rem !important;
+  }
+
+  .modal-comment-area>p {
+    margin-bottom: 1.25rem !important;
+    color: #374151 !important;
+  }
+
+  /* Subtle shadow for depth */
+  .modal-image-area {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+  }
+}
+
+/* Landscape mobile adjustments */
+@media (max-width: 768px) and (orientation: landscape) {
+  .modal-image-area {
+    height: 70vh !important;
+    flex: 0 0 70vh !important;
+  }
+
+  .modal-comment-area {
+    height: 30vh !important;
+    flex: 0 0 30vh !important;
+  }
+
+  #photo-modal #modal-image {
+    max-width: calc(100vw - 2rem) !important;
+    max-height: calc(70vh - 2rem) !important;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  #photo-modal #modal-close {
+    padding: 0.625rem !important;
+  }
+
+  #photo-modal #modal-close svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .modal-nav-btn {
+    width: 45px !important;
+    height: 45px !important;
+  }
+
+  .modal-nav-btn svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  .modal-comment-area {
+    padding: 0.875rem !important;
+  }
+}/* Mobile 
+Landscape Mode - 50vh-50vh Split */
+@media (max-width: 768px) and (orientation: landscape) {
+  .modal-image-area {
+    height: 50vh !important;
+    flex: 0 0 50vh !important;
+  }
+
+  .modal-comment-area {
+    height: 50vh !important;
+    flex: 0 0 50vh !important;
+  }
+
+  #photo-modal #modal-image {
+    max-width: calc(100vw - 2rem) !important;
+    max-height: calc(50vh - 2rem) !important;
+  }
+}/
+* Mobile Portrait & Landscape - 70vh-30vh Split */
+@media (max-width: 768px) {
+  .modal-image-area {
+    height: 70vh !important;
+    flex: 0 0 70vh !important;
+  }
+
+  .modal-comment-area {
+    height: 30vh !important;
+    flex: 0 0 30vh !important;
+  }
+
+  #photo-modal #modal-image {
+    max-width: calc(100vw - 2rem) !important;
+    max-height: calc(70vh - 2rem) !important;
+  }
+}/* Load
+ing Animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Modal Loading Improvements */
+#photo-modal #modal-loading {
+  backdrop-filter: blur(5px) !important;
+}
+
+#photo-modal #modal-image {
+  transition: opacity 0.3s ease !important;
+}
+
+/* Mobile Modal Optimizations */
+@media (max-width: 768px) {
+  #photo-modal .modal-container {
+    position: relative !important;
+  }
+  
+  #photo-modal #modal-loading {
+    background-color: rgba(0,0,0,0.7) !important;
+  }
+  
+  #photo-modal #modal-image {
+    max-width: calc(100vw - 1rem) !important;
+    max-height: calc(70vh - 1rem) !important;
+  }
+}/*
+ Modal Image Centering */
+#photo-modal .modal-image-area {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+#photo-modal #modal-image {
+  margin: 0 auto !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+/* Better image centering for all devices */
+@media (max-width: 768px) {
+  #photo-modal .modal-image-area {
+    padding: 1rem !important;
+  }
+  
+  #photo-modal #modal-image {
+    max-width: calc(100vw - 2rem) !important;
+    max-height: calc(70vh - 2rem) !important;
+  }
+}
+
+@media (min-width: 769px) {
+  #photo-modal #modal-image {
+    max-width: calc(600px - 2rem) !important;
+    max-height: calc(800px - 2rem) !important;
+  }
+}
+/
+* Perfect Modal Image Centering - Updated */
+#photo-modal .modal-image-area {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+}
+
+#photo-modal #modal-image {
+  margin: 0 auto !important;
+  position: relative !important;
+  z-index: 10 !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  display: block !important;
+}
+
+/* Perfect centering for both orientations */
+#photo-modal .modal-image-area img {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  max-width: calc(100% - 2rem) !important;
+  max-height: calc(100% - 2rem) !important;
 }
