@@ -34,6 +34,8 @@
     currentPhotoIndex: 0,
     currentCommentIndex: 0,
     galleryScrolling: false,
+    galleryAllPhotos: [],
+    galleryLoadedCount: 11,
     container: null
   };
 
@@ -174,7 +176,7 @@
         <div class="bg-white rounded-lg shadow-sm border">
           ${this.renderHeader(sortOptions)}
           ${this.renderGallery()}
-          <div class="divide-y">
+          <div id="reviews-section" class="reviews-section divide-y">
             ${this.renderComments()}
             ${this.renderLoadMore()}
           </div>
@@ -267,41 +269,42 @@
       // Get all photos from ALL comments (not just filtered ones)
       const allPhotos = Array.from(new Set(
         (state.data?.comments || []).flatMap(c => c.photos || [])
-      )).slice(0, 50);
+      ));
 
       if (allPhotos.length === 0) return '';
+
+      state.galleryAllPhotos = allPhotos;
+      if (!state.galleryLoadedCount || state.galleryLoadedCount < 1) {
+        state.galleryLoadedCount = 11;
+      }
+      const visiblePhotos = allPhotos.slice(0, state.galleryLoadedCount);
 
       return `
         <div class="p-6 border-b">
           <div class="flex items-center justify-between mb-4">
             <h3 class="photo-reviews-title font-medium text-gray-900">Fotoğraflı Değerlendirmeler (${state.data?.product?.total_comment_count || state.data?.comments?.length || 0})</h3>
-            <div class="flex gap-1">
-              <button class="gallery-nav-btn" data-direction="prev">
-                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              <button class="gallery-nav-btn" data-direction="next">
-                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            </div>
           </div>
           
           <div class="relative">
-            <div class="absolute left-0 top-0 bottom-0 w-8 z-10 pointer-events-none" 
-                 style="background: linear-gradient(90deg, #FFFFFF 10.61%, rgba(255, 255, 255, 0) 100%)"></div>
-            <div class="absolute right-0 top-0 bottom-0 w-8 z-10 pointer-events-none" 
-                 style="background: linear-gradient(270deg, #FFFFFF 10.61%, rgba(255, 255, 255, 0) 100%)"></div>
+            <button class="gallery-nav-btn gallery-nav-btn-overlay left" data-direction="prev" aria-label="Önceki">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </button>
+            <button class="gallery-nav-btn gallery-nav-btn-overlay right" data-direction="next" aria-label="Sonraki">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+            <div class="gallery-fade-left"></div>
+            <div class="gallery-fade-right"></div>
             
             <div class="gallery-container flex gap-3 overflow-x-auto scrollbar-hide pb-2 scroll-smooth">
-              ${allPhotos.map(photo => `
+              ${visiblePhotos.map(photo => `
                 <div class="gallery-photo-item flex-shrink-0 bg-black rounded-lg border hover:shadow-md transition-all duration-200 cursor-pointer overflow-hidden group" 
-                     style="width: calc((100% - 7 * 0.75rem) / 8); min-width: 100px; aspect-ratio: 1/1;"
                      data-photo="${photo}">
-                  <img src="${utils.getOptimizedImageUrl(photo, 200)}" alt="" 
-                       class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105" loading="lazy">
+                  <img src="${utils.getOptimizedImageUrl(photo, 300)}" alt="" 
+                       style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
                 </div>
               `).join('')}
             </div>
@@ -320,26 +323,26 @@
       }
 
       return state.comments.map(comment => `
-        <div class="p-6 border-b">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="flex">
+        <div class="review-card p-6 border-b">
+          <div class="review-header flex items-center gap-3 mb-3">
+            <div class="review-stars flex">
               ${utils.createStarRating(comment.rating)}
             </div>
-            <div class="text-sm text-gray-600">
-              <span class="font-medium">${comment.user || '****'}</span>
-              <span class="mx-2">•</span>
-              <span>${comment.date || ''}</span>
+            <div class="review-details text-sm text-gray-600">
+              <span class="review-user font-medium">${comment.user || '****'}</span>
+              <span class="divider mx-2">•</span>
+              <span class="review-date">${comment.date || ''}</span>
             </div>
           </div>
           
-          <p class="text-gray-800 mb-4 leading-relaxed">
+          <p class="review-body text-gray-800 mb-4 leading-relaxed">
             ${comment.comment || ''}
           </p>
           
           ${comment.photos && comment.photos.length > 0 ? `
-            <div class="flex gap-2 mb-4 flex-wrap">
+            <div class="review-photos flex gap-2 mb-4 flex-wrap">
               ${comment.photos.slice(0, 6).map(photo => `
-                <div class="bg-black border hover:shadow-md transition-shadow cursor-pointer overflow-hidden comment-photo" 
+                <div class="review-photo bg-black border hover:shadow-md transition-shadow cursor-pointer overflow-hidden" 
                      style="width: 150px; height: 150px; flex-shrink: 0; border-radius: 5px;"
                      data-photo="${photo}">
                   <img src="${utils.getOptimizedImageUrl(photo, 300)}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
@@ -348,14 +351,14 @@
             </div>
           ` : ''}
           
-          <div class="text-sm mb-3" style="color: #666;">
+          <div class="review-seller text-sm mb-3" style="color: #666;">
             <span class="font-medium">Madetoll by TazeKrem</span> satıcısından alındı
           </div>
           
           ${comment.user_info ? `
-            <div class="text-sm text-gray-500 mb-3">
-              <span>Boy: ${comment.user_info.height || ''}</span>
-              <span class="mx-3">Kilo: ${comment.user_info.weight || ''}</span>
+            <div class="review-user-extra text-sm text-gray-500 mb-3">
+              <span class="height">Boy: ${comment.user_info.height || ''}</span>
+              <span class="weight mx-3">Kilo: ${comment.user_info.weight || ''}</span>
             </div>
           ` : ''}
         </div>
@@ -544,7 +547,7 @@
     },
 
     handleMainClick(e) {
-      const target = e.target.closest('button, .gallery-photo-item, .comment-photo');
+      const target = e.target.closest('button, .gallery-photo-item, .review-photo');
       if (!target) return;
 
       e.preventDefault();
@@ -578,12 +581,29 @@
           left: target.dataset.direction === 'next' ? 92 : -92,
           behavior: 'smooth'
         });
+        // Lazy load next photo when nearing the right end
+        if (target.dataset.direction === 'next') {
+          const nearEnd = (container.scrollLeft + container.clientWidth) >= (container.scrollWidth - 120);
+          if (nearEnd && state.galleryLoadedCount < state.galleryAllPhotos.length) {
+            const nextPhoto = state.galleryAllPhotos[state.galleryLoadedCount];
+            if (nextPhoto) {
+              const newItem = `
+                <div class="gallery-photo-item flex-shrink-0 bg-black rounded-lg border hover:shadow-md transition-all duration-200 cursor-pointer overflow-hidden group" 
+                     data-photo="${nextPhoto}">
+                  <img src="${utils.getOptimizedImageUrl(nextPhoto, 300)}" alt="" 
+                       style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
+                </div>`;
+              container.insertAdjacentHTML('beforeend', newItem);
+              state.galleryLoadedCount++;
+            }
+          }
+        }
         setTimeout(() => state.galleryScrolling = false, 300);
         return;
       }
 
       // Photo click (gallery or comment photos)
-      if (target.classList.contains('gallery-photo-item') || target.classList.contains('comment-photo')) {
+      if (target.classList.contains('gallery-photo-item') || target.classList.contains('review-photo')) {
         const photoUrl = target.dataset.photo;
         console.log('🖼️ Gallery photo clicked:', photoUrl);
         console.log('📊 Current state:', { comments: state.comments.length, modalOpen: state.modalOpen });
@@ -803,9 +823,10 @@
       
       if (mainImage && imageLoader) {
         const newPhotoUrl = comment.photos[state.currentPhotoIndex];
+        const optimizedUrl = utils.getOptimizedImageUrl(newPhotoUrl, 700);
         
         // If it's the same image, just show it
-        if (mainImage.src === newPhotoUrl) {
+        if (mainImage.src === optimizedUrl) {
           imageLoader.style.setProperty('display', 'none', 'important');
           mainImage.style.setProperty('display', 'block', 'important');
           return;
@@ -819,7 +840,7 @@
         const tempImage = new Image();
         
         tempImage.onload = () => {
-          mainImage.src = newPhotoUrl;
+          mainImage.src = optimizedUrl;
           imageLoader.style.setProperty('display', 'none', 'important');
           mainImage.style.setProperty('display', 'block', 'important');
         };
@@ -831,7 +852,7 @@
         };
         
         // Start loading
-        tempImage.src = newPhotoUrl;
+        tempImage.src = optimizedUrl;
       }
 
       const dots = document.querySelectorAll('#sliderDots .dot');
@@ -859,6 +880,34 @@
       // Method 4: URL parameter
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get('product') || urlParams.get('p');
+    },
+
+    getProductName() {
+      const selectors = [
+        '.product_title',
+        'h1.product_title',
+        '.entry-title',
+        'h1.entry-title',
+        '.summary .product_title',
+        '.product .product_title',
+        '[itemprop="name"]'
+      ];
+
+      for (const sel of selectors) {
+        const el = document.querySelector(sel);
+        if (el && el.textContent) {
+          const name = el.textContent.trim();
+          if (name) return name;
+        }
+      }
+
+      const og = document.querySelector('meta[property="og:title"]');
+      if (og) {
+        const name = og.getAttribute('content');
+        if (name) return name.trim();
+      }
+
+      return document.title?.trim() || '';
     },
 
     findOrCreateContainer() {
@@ -947,6 +996,13 @@
     // Initialize state
     state.data = data;
     state.allComments = data.comments || [];
+
+    // Ensure product name from WooCommerce page
+    const wcName = woocommerce.getProductName();
+    if (wcName) {
+      state.data.product = state.data.product || {};
+      state.data.product.name = wcName;
+    }
 
     // Initialize event managers
     eventManager.init();
